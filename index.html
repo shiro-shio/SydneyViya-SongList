@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<title>🎵 可愛即時查歌</title>
+<meta charset="UTF-8">
+<title>🎵 即時查歌</title>
 
 <style>
-/* ====== 整體可愛風格 ====== */
 body {
     font-family: "Noto Sans TC", sans-serif;
-    background: linear-gradient(135deg, #ffe4f0, #e0f7ff);
+    background: linear-gradient(135deg, #ffe0ec, #e0f7ff);
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -18,56 +17,66 @@ body {
 
 .card {
     background: #fff;
-    width: 420px;
-    max-height: 80vh;
-    border-radius: 20px;
+    width: 460px;
+    max-height: 85vh;
+    border-radius: 22px;
     padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    box-shadow: 0 12px 30px rgba(0,0,0,.15);
     display: flex;
     flex-direction: column;
 }
 
 h1 {
     text-align: center;
-    margin: 0 0 10px;
+    margin: 0 0 12px;
 }
 
 input {
     padding: 12px;
-    border-radius: 12px;
-    border: 2px solid #ffd3e2;
-    outline: none;
+    border-radius: 14px;
+    border: 2px solid #ffc2d9;
     font-size: 16px;
+    outline: none;
 }
 
 input:focus {
-    border-color: #ff8fb1;
+    border-color: #ff7eb6;
 }
 
-/* ====== 結果區 ====== */
 .result {
     margin-top: 15px;
     overflow-y: auto;
 }
 
 .item {
-    background: #fff5f9;
-    border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 8px;
+    background: #fff3f8;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
     animation: fadeIn .2s ease;
 }
 
 .song {
     font-weight: bold;
+    font-size: 16px;
 }
 
-.artist {
+.meta {
     font-size: 14px;
-    color: #666;
+    color: #555;
+    margin-top: 2px;
 }
 
-/* 小動畫 */
+.tag {
+    display: inline-block;
+    background: #ffd6e7;
+    color: #b1004b;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-right: 4px;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(5px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -78,24 +87,24 @@ input:focus {
 <body>
 <div class="card">
     <h1>🎧 即時查歌</h1>
-    <input id="kw" placeholder="輸入歌名 / 歌手…" />
+    <input id="kw" placeholder="輸入曲名 / 歌手 / 語言…" />
     <div class="result" id="result"></div>
 </div>
 
 <script>
-/* =========================
+/* ===============================
    Google Sheet 設定
-   ========================= */
+   =============================== */
 const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
 const GID = 0;
 
-// CSV 來源（每次刷新都會重新抓）
 const CSV_URL =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
-/* =========================
-   資料載入
-   ========================= */
+/* ===============================
+   載入歌曲資料
+   第 2 列是標題，第 3 列開始才是資料
+   =============================== */
 let songs = [];
 
 async function loadSongs() {
@@ -103,10 +112,11 @@ async function loadSongs() {
     const text = await res.text();
 
     const rows = text.trim().split('\n').map(r => r.split(','));
-    const headers = rows[0];
 
-    // 將每一列轉成物件（欄位名 → 值）
-    songs = rows.slice(1).map(r => {
+    const headers = rows[1];          // ✅ A2:F2
+    const dataRows = rows.slice(2);   // ✅ A3:F1000
+
+    songs = dataRows.map(r => {
         const obj = {};
         headers.forEach((h, i) => obj[h] = r[i] || '');
         return obj;
@@ -115,9 +125,9 @@ async function loadSongs() {
 
 loadSongs();
 
-/* =========================
-   即時搜尋
-   ========================= */
+/* ===============================
+   即時查詢（每輸入一字）
+   =============================== */
 const input = document.getElementById('kw');
 const resultBox = document.getElementById('result');
 
@@ -136,9 +146,14 @@ input.addEventListener('input', () => {
         div.className = 'item';
 
         div.innerHTML = `
-            <div class="song">🎵 ${song['歌名'] || ''}</div>
-            <div class="artist">👤 ${song['歌手'] || ''}</div>
-            <div class="artist">${song['備註'] || ''}</div>
+            <div class="song">🎵 ${song['曲名']}</div>
+            <div class="meta">👤 ${song['歌手']}</div>
+            <div class="meta">
+                <span class="tag">${song['語言']}</span>
+                <span class="tag">${song['類型']}</span>
+                <span class="tag">熟練：${song['熟練']}</span>
+            </div>
+            <div class="meta">🎹 ${song['音源(伴奏)']}</div>
         `;
 
         resultBox.appendChild(div);
