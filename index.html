@@ -132,7 +132,7 @@ async function loadSongs() {
     songs = dataRows.map(r => {
         const obj = {};
         HEADERS.forEach((h, i) => {
-            obj[h] = r[i] || '';   // 只吃前 6 欄（A~F）
+            obj[h] = r[i] ? r[i].trim().replace(/^"+|"+$/g,'') : '';
         });
         return obj;
     });
@@ -152,7 +152,10 @@ input.addEventListener('input', () => {
     const kw = input.value.trim().toLowerCase();
     resultBox.innerHTML = '';
 
-    if (!kw) return;
+    if (!kw) {
+        renderList(songs);
+        return;
+    }
 
     const matched = songs.filter(song =>
         SEARCH_FIELDS.some(field =>
