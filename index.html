@@ -133,6 +133,7 @@ async function loadSongs() {
         headers.forEach((h, i) => obj[h] = r[i] || '');
         return obj;
     });
+    renderList(songs);
 }
 
 loadSongs();
@@ -174,11 +175,11 @@ input.addEventListener('input', () => {
         </div>
     
         ${song['音源(伴奏)'] ? `
-        <div class="meta">
+        <!--div class="meta">
             🎹 <a href="${song['音源(伴奏)']}" target="_blank" rel="noopener noreferrer">
                 點我聽伴奏
             </a>
-        </div>` : ''}
+        </div-->` : ''}
     `;
         
         resultBox.appendChild(div);
@@ -191,6 +192,45 @@ function copyText(text) {
         alert(`已複製：${text}`);
     });
 }
+// 將歌曲清單渲染到畫面
+function renderList(list) {
+    const resultBox = document.getElementById('result');
+    resultBox.innerHTML = '';
+
+    list.forEach(song => {
+        const div = document.createElement('div');
+        div.className = 'item';
+
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="song">🎵 ${song['曲名']}</div>
+                <button class="copy-btn" onclick="copyText('${song['曲名']}')">
+                    📋 複製
+                </button>
+            </div>
+
+            <div class="meta">👤 ${song['歌手']}</div>
+
+            <div class="meta">
+                <span class="tag">${song['語言']}</span>
+                <span class="tag">${song['類型']}</span>
+                <span class="tag">熟練：${song['熟練']}</span>
+            </div>
+
+            ${song['音源(伴奏)'] ? `
+            <div class="meta">
+                🎹 <a href="${song['音源(伴奏)']}"
+                     target="_blank"
+                     rel="noopener noreferrer">
+                    點我聽伴奏
+                </a>
+            </div>` : ''}
+        `;
+
+        resultBox.appendChild(div);
+    });
+}
+
 </script>
 </body>
 </html>
