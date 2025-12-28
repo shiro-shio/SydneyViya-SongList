@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<title>🎵 可愛即時查歌</title>
+
+<style>
+/* ====== 整體可愛風格 ====== */
+body {
+    font-family: "Noto Sans TC", sans-serif;
+    background: linear-gradient(135deg, #ffe4f0, #e0f7ff);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background: #fff;
+    width: 420px;
+    max-height: 80vh;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    text-align: center;
+    margin: 0 0 10px;
+}
+
+input {
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #ffd3e2;
+    outline: none;
+    font-size: 16px;
+}
+
+input:focus {
+    border-color: #ff8fb1;
+}
+
+/* ====== 結果區 ====== */
+.result {
+    margin-top: 15px;
+    overflow-y: auto;
+}
+
+.item {
+    background: #fff5f9;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 8px;
+    animation: fadeIn .2s ease;
+}
+
+.song {
+    font-weight: bold;
+}
+
+.artist {
+    font-size: 14px;
+    color: #666;
+}
+
+/* 小動畫 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+    <h1>🎧 即時查歌</h1>
+    <input id="kw" placeholder="輸入歌名 / 歌手…" />
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+/* =========================
+   Google Sheet 設定
+   ========================= */
+const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
+const GID = 0;
+
+// CSV 來源（每次刷新都會重新抓）
+const CSV_URL =
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+/* =========================
+   資料載入
+   ========================= */
+let songs = [];
+
+async function loadSongs() {
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+
+    const rows = text.trim().split('\n').map(r => r.split(','));
+    const headers = rows[0];
+
+    // 將每一列轉成物件（欄位名 → 值）
+    songs = rows.slice(1).map(r => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = r[i] || '');
+        return obj;
+    });
+}
+
+loadSongs();
+
+/* =========================
+   即時搜尋
+   ========================= */
+const input = document.getElementById('kw');
+const resultBox = document.getElementById('result');
+
+input.addEventListener('input', () => {
+    const kw = input.value.trim();
+    resultBox.innerHTML = '';
+
+    if (!kw) return;
+
+    const matched = songs.filter(song =>
+        Object.values(song).some(v => v.includes(kw))
+    );
+
+    matched.forEach(song => {
+        const div = document.createElement('div');
+        div.className = 'item';
+
+        div.innerHTML = `
+            <div class="song">🎵 ${song['歌名'] || ''}</div>
+            <div class="artist">👤 ${song['歌手'] || ''}</div>
+            <div class="artist">${song['備註'] || ''}</div>
+        `;
+
+        resultBox.appendChild(div);
+    });
+});
+</script>
+</body>
+</html>
