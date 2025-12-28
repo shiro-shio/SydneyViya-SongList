@@ -7,7 +7,7 @@
 <style>
 body {
     font-family: "Noto Sans TC", sans-serif;
-    background: linear-gradient(135deg, #ffe0ec, #e0f7ff);
+    background: linear-gradient(135deg, #f1e0ff, #d1ceff);
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -66,7 +66,6 @@ input:focus {
     color: #555;
     margin-top: 2px;
 }
-
 .tag {
     display: inline-block;
     background: #ffd6e7;
@@ -76,7 +75,20 @@ input:focus {
     font-size: 12px;
     margin-right: 4px;
 }
+.copy-btn {
+    border: none;
+    background: #ffd6e7;
+    color: #b1004b;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+}
 
+.copy-btn:hover {
+    background: #ffb6d5;
+}
+    
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(5px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -145,20 +157,40 @@ input.addEventListener('input', () => {
         const div = document.createElement('div');
         div.className = 'item';
 
-        div.innerHTML = `
+    div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="song">🎵 ${song['曲名']}</div>
-            <div class="meta">👤 ${song['歌手']}</div>
-            <div class="meta">
-                <span class="tag">${song['語言']}</span>
-                <span class="tag">${song['類型']}</span>
-                <span class="tag">熟練：${song['熟練']}</span>
-            </div>
-            <div class="meta">🎹 ${song['音源(伴奏)']}</div>
-        `;
-
+            <button class="copy-btn" onclick="copyText('${song['曲名']}')">
+                📋 複製
+            </button>
+        </div>
+    
+        <div class="meta">👤 ${song['歌手']}</div>
+    
+        <div class="meta">
+            <span class="tag">${song['語言']}</span>
+            <span class="tag">${song['類型']}</span>
+            <span class="tag">熟練：${song['熟練']}</span>
+        </div>
+    
+        ${song['音源(伴奏)'] ? `
+        <div class="meta">
+            🎹 <a href="${song['音源(伴奏)']}" target="_blank" rel="noopener noreferrer">
+                點我聽伴奏
+            </a>
+        </div>` : ''}
+    `;
+        
         resultBox.appendChild(div);
     });
 });
+// 將文字複製到剪貼簿
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // 可愛一點的即時回饋
+        alert(`已複製：${text}`);
+    });
+}
 </script>
 </body>
 </html>
