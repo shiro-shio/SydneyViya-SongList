@@ -145,14 +145,14 @@ const input = document.getElementById('kw');
 const resultBox = document.getElementById('result');
 
 input.addEventListener('input', () => {
-    const kw = input.value.trim();
+    const kw = input.value.trim().toLowerCase();
     resultBox.innerHTML = '';
 
     if (!kw) return;
 
     const matched = songs.filter(song =>
         SEARCH_FIELDS.some(field =>
-            song[field]?.includes(kw)
+            song[field]?.toLowerCase().includes(kw)
         )
     );
 
@@ -220,13 +220,13 @@ function renderList(list) {
             </div>
 
             ${song['音源(伴奏)'] ? `
-            <div class="meta">
+            <!--div class="meta">
                 🎹 <a href="${song['音源(伴奏)']}"
                      target="_blank"
                      rel="noopener noreferrer">
                     點我聽伴奏
                 </a>
-            </div>` : ''}
+            </div-->` : ''}
         `;
 
         resultBox.appendChild(div);
