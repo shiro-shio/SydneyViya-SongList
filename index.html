@@ -192,9 +192,13 @@ input.addEventListener('input', () => {
         div.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div class="song">🎵 ${song['曲名']}</div>
-                <button class="copy-btn" onclick="copyText('${song['曲名']}')">
-                    📋 複製
-                </button>
+            <button class="copy-btn" onclick="copyText('${song['曲名']}')">
+            <img src="https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/main/img/B_copy.svg"
+                alt="複製"
+                class="copy-icon"
+                draggable="false"
+            > 複製
+            </button>
             </div>
         
             <div class="meta">👤 ${song['歌手']}</div>
