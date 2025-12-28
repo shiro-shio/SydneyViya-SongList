@@ -119,8 +119,7 @@ const CSV_URL =
    第 2 列是標題，第 3 列開始才是資料
    =============================== */
 let songs = [];
-
-async function loadSongs() {
+/*sync function loadSongs() {
     const res = await fetch(CSV_URL);
     const text = await res.text();
 
@@ -138,8 +137,42 @@ async function loadSongs() {
     });
     renderList(songs);
 }
+*/
+async function loadSongs() {
+    const res = await fetch(CSV_URL);
+    const csvText = await res.text();
+    const rows = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
 
+    const dataRows = rows.slice(2);
 
+    // CSV 正則解析函式
+    function parseCSVLine(line) {
+        const regex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
+        const result = [];
+        let match;
+        while ((match = regex.exec(line)) !== null) {
+            if (match[1] !== undefined) {
+                // 去掉外層雙引號、轉換內部雙引號 ""
+                result.push(match[1].replace(/""/g,'"').trim());
+            } else {
+                result.push((match[2] || '').trim());
+            }
+        }
+        return result;
+    }
+
+    songs = dataRows.map(r => {
+        const fields = parseCSVLine(r);
+        const obj = {};
+        HEADERS.forEach((h, i) => {
+            obj[h] = fields[i] || '';
+        });
+        return obj;
+    });
+
+    // 預設顯示全部
+    renderList(songs);
+}
 loadSongs();
 
 /* ===============================
