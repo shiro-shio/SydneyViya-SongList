@@ -110,6 +110,7 @@ input:focus {
 const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
 const GID = 0;
 const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
+const HEADERS = ['語言', '曲名', '歌手', '音源(伴奏)', '熟練', '類型'];
 const CSV_URL =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
@@ -125,16 +126,19 @@ async function loadSongs() {
 
     const rows = text.trim().split('\n').map(r => r.split(','));
 
-    const headers = rows[1];          // ✅ A2:F2
-    const dataRows = rows.slice(2);   // ✅ A3:F1000
+    // A3:F1000 才是資料
+    const dataRows = rows.slice(2);
 
     songs = dataRows.map(r => {
         const obj = {};
-        headers.forEach((h, i) => obj[h] = r[i] || '');
+        HEADERS.forEach((h, i) => {
+            obj[h] = r[i] || '';   // 只吃前 6 欄（A~F）
+        });
         return obj;
     });
     renderList(songs);
 }
+
 
 loadSongs();
 
