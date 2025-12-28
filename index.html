@@ -109,7 +109,7 @@ input:focus {
    =============================== */
 const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
 const GID = 0;
-
+const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
 const CSV_URL =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
@@ -151,7 +151,9 @@ input.addEventListener('input', () => {
     if (!kw) return;
 
     const matched = songs.filter(song =>
-        Object.values(song).some(v => v.includes(kw))
+        SEARCH_FIELDS.some(field =>
+            song[field]?.includes(kw)
+        )
     );
 
     matched.forEach(song => {
