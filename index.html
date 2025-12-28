@@ -98,7 +98,7 @@ input:focus {
 
 <body>
 <div class="card">
-    <h1>歌單查歌~</h1>
+    <h1>歌單搜尋~</h1>
     <input id="kw" placeholder="輸入曲名 / 歌手 / 語言…" />
     <div class="result" id="result"></div>
 </div>
@@ -119,25 +119,6 @@ const CSV_URL =
    第 2 列是標題，第 3 列開始才是資料
    =============================== */
 let songs = [];
-/*sync function loadSongs() {
-    const res = await fetch(CSV_URL);
-    const text = await res.text();
-
-    const rows = text.trim().split('\n').map(r => r.split(','));
-
-    // A3:F1000 才是資料
-    const dataRows = rows.slice(2);
-
-    songs = dataRows.map(r => {
-        const obj = {};
-        HEADERS.forEach((h, i) => {
-            obj[h] = r[i] ? r[i].trim().replace(/^"+|"+$/g,'') : '';
-        });
-        return obj;
-    });
-    renderList(songs);
-}
-*/
 async function loadSongs() {
     const res = await fetch(CSV_URL);
     const csvText = await res.text();
@@ -233,47 +214,11 @@ input.addEventListener('input', () => {
 function copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
         // 可愛一點的即時回饋
-        alert(`已複製：${text}`);
+        console.log(`已複製：${text}`);
     });
 }
 // 將歌曲清單渲染到畫面
-/*function//*function/function/function resultBox = document.getElementById('result');
-    resultBox.innerHTML = '';
 
-    list.forEach(song => {
-        const div = document.createElement('div');
-        div.className = 'item';
-
-        div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div class="song">🎵 ${song['曲名']}</div>
-                <button class="copy-btn" onclick="copyText('${song['曲名']}')">
-                    📋 複製
-                </button>
-            </div>
-
-            <div class="meta">👤 ${song['歌手']}</div>
-
-            <div class="meta">
-                <span class="tag">${song['語言']}</span>
-                <span class="tag">${song['類型']}</span>
-                <span class="tag">熟練：${song['熟練']}</span>
-            </div>
-
-            ${song['音源(伴奏)'] ? `
-            <!--div class="meta">
-                🎹 <a href="${song['音源(伴奏)']}"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    點我聽伴奏
-                </a>
-            </div-->` : ''}
-        `;
-
-        resultBox.appendChild(div);
-    });
-}
-*/
 function renderList(list) {
     const resultBox = document.getElementById('result');
     resultBox.innerHTML = '';
