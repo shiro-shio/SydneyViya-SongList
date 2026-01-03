@@ -110,9 +110,6 @@ input:focus {
 </div>
 
 <script>
-/* ===============================
-   Google Sheet 設定
-   =============================== */
 const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
 const GID = 0;
 const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
@@ -120,10 +117,6 @@ const HEADERS = ['語言', '曲名', '歌手', '音源(伴奏)', '熟練', '類�
 const CSV_URL =
     `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
-/* ===============================
-   載入歌曲資料
-   第 2 列是標題，第 3 列開始才是資料
-   =============================== */
 let songs = [];
 async function loadSongs() {
     const res = await fetch(CSV_URL);
@@ -132,14 +125,13 @@ async function loadSongs() {
 
     const dataRows = rows.slice(2);
 
-    // CSV 正則解析函式
+
     function parseCSVLine(line) {
         const regex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
         const result = [];
         let match;
         while ((match = regex.exec(line)) !== null) {
             if (match[1] !== undefined) {
-                // 去掉外層雙引號、轉換內部雙引號 ""
                 result.push(match[1].replace(/""/g,'"').trim());
             } else {
                 result.push((match[2] || '').trim());
@@ -157,14 +149,10 @@ async function loadSongs() {
         return obj;
     });
 
-    // 預設顯示全部
     renderList(songs);
 }
 loadSongs();
 
-/* ===============================
-   即時查詢（每輸入一字）
-   =============================== */
 const input = document.getElementById('kw');
 const resultBox = document.getElementById('result');
 
@@ -220,14 +208,11 @@ input.addEventListener('input', () => {
         resultBox.appendChild(div);
     });
 });
-// 將文字複製到剪貼簿
 function copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
-        // 可愛一點的即時回饋
         console.log(`已複製：${text}`);
     });
 }
-// 將歌曲清單渲染到畫面
 
 function renderList(list) {
     const resultBox = document.getElementById('result');
@@ -237,7 +222,6 @@ function renderList(list) {
         const div = document.createElement('div');
         div.className = 'item';
 
-        // 將類型拆成多個 tag
         const typeTags = song['類型']
             ? song['類型'].split(',').map(t => `<span class="tag">${t.trim()}</span>`).join(' ')
             : '';
