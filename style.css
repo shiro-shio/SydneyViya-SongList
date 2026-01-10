@@ -65,6 +65,9 @@ input:focus {
     overflow-y: auto;
     scrollbar-width: none;
     user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .item {
@@ -74,6 +77,14 @@ input:focus {
     margin-bottom: 10px;
     animation: fadeIn .2s ease;
     backdrop-filter: blur(3px);
+    width: 22rem;
+    height: 4rem;
+}
+
+.item:hover {
+    background: linear-gradient(158deg, #b8abffb5, #dbd9ffb5, #fecaffb5);
+    width: 25rem;
+    height: 5rem;
 }
 
 .song {
@@ -130,4 +141,3 @@ input:focus {
         transform: translateY(0);
     }
 }
-
