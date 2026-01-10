@@ -106,7 +106,7 @@ input:focus {
 .icon {
     width: 16px;
     height: 16px;
-    filter: invert(1);
+    filter: invert(1) drop-shadow(-1px 0px 0.3px #8223ff) drop-shadow(0px -1px 0.3px #3923ff) drop-shadow(1px 0px 0.3px #3923ff) drop-shadow(0px 1px 0.3px #3923ff);
 }
 
 .copy-btn:hover {
