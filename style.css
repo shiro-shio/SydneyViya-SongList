@@ -12,13 +12,15 @@ body {
     background: #fff;
     width: 100%;
     max-width: 460px;
-    max-height: 85vh;
+    height: 100vh;
+    max-height: 95vh;
     border-radius: 22px;
     padding: 20px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, .15);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    background-image: url(https://www.popdaily.com.tw/shaper/u/202310/c64f5d34-ff76-4f26-a500-52c36abf4cd7.png);
 }
 
 @media (max-width: 600px) {
@@ -60,14 +62,17 @@ input:focus {
 .result {
     margin-top: 15px;
     overflow-y: auto;
+    scrollbar-width: none;
+    user-select: none;
 }
 
 .item {
-    background: #e4dbfba6;
+    background: #e4dbfb91;
     border-radius: 14px;
     padding: 12px;
     margin-bottom: 10px;
     animation: fadeIn .2s ease;
+    backdrop-filter: blur(3px);
 }
 
 .song {
@@ -83,7 +88,7 @@ input:focus {
 
 .tag {
     display: inline-block;
-    background: #c9c3ff;
+    background: #fd98ff94;
     color: #6e22d3;
     padding: 2px 8px;
     border-radius: 999px;
@@ -93,7 +98,7 @@ input:focus {
 
 .copy-btn {
     border: none;
-    background: #c9c3ff;
+    background: #fd98ff94;
     color: #6e22d3;
     border-radius: 999px;
     padding: 4px 10px;
@@ -106,7 +111,7 @@ input:focus {
 .icon {
     width: 16px;
     height: 16px;
-    filter: invert(1) drop-shadow(-1px 0px 0.3px #8223ff) drop-shadow(0px -1px 0.3px #3923ff) drop-shadow(1px 0px 0.3px #3923ff) drop-shadow(0px 1px 0.3px #3923ff);
+    filter: invert(1) drop-shadow(-1px 0px 0.3px #ca44ffaf) drop-shadow(0px -1px 0.3px #ca44ffaf) drop-shadow(1px 0px 0.3px #ca44ffaf) drop-shadow(0px 1px 0.3px #ca44ffaf);
 }
 
 .copy-btn:hover {
