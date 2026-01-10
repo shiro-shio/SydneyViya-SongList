@@ -2,6 +2,7 @@ const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
 const HEADERS = ['語言', '曲名', '歌手', '音源(伴奏)', '熟練', '類型'];
 const API_URL =`https://script.google.com/macros/s/AKfycbzndg2ucDRDrBnej9lTiphmKHKatx8RGLFn-vIFCZKivxthIjvxrfsPBYGYuz8SpWDt/exec`;
 
+let songs = [];
 let filteredSongs = [];
 let displayCount = 20;
 const PAGE_SIZE = 20;
@@ -10,13 +11,15 @@ async function loadSongs() {
     try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        filteredSongs = data.slice(2).map(r => {
+        songs = data.slice(2).map(r => {
             const obj = {};
             HEADERS.forEach((h, i) => {
                 obj[h] = r[i] !== undefined ? String(r[i]).trim() : '';
             });
             return obj;
         });
+
+        filteredSongs = songs;
         renderList(false); 
     } catch (err) {
         console.error("載入失敗:", err);
@@ -29,7 +32,7 @@ const resultBox = document.getElementById('result');
 
 input.addEventListener('input', () => {
     const kw = input.value.trim().toLowerCase();
-    filteredSongs = allSongs.filter(song =>
+    filteredSongs = songs.filter(song =>
         SEARCH_FIELDS.some(field => 
             song[field]?.toLowerCase().includes(kw)
         )
