@@ -1,8 +1,6 @@
-const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
-const GID = 0;
 const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
 const HEADERS = ['語言', '曲名', '歌手', '音源(伴奏)', '熟練', '類型'];
-const CSV_URL =`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+const API_URL =`https://script.google.com/macros/s/AKfycbzndg2ucDRDrBnej9lTiphmKHKatx8RGLFn-vIFCZKivxthIjvxrfsPBYGYuz8SpWDt/exec`;
 
 let songs = [];
 let filteredSongs = [];
@@ -10,34 +8,21 @@ let displayCount = 20;
 const PAGE_SIZE = 20;
 
 async function loadSongs() {
-    const res = await fetch(CSV_URL);
-    const csvText = await res.text();
-    const rows = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-    const dataRows = rows.slice(2);
-
-    function parseCSVLine(line) {
-        const regex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
-        const result = [];
-        let match;
-        while ((match = regex.exec(line)) !== null) {
-            if (match[1] !== undefined) {
-                result.push(match[1].replace(/""/g, '"').trim());
-            } else {
-                result.push((match[2] || '').trim());
-            }
-        }
-        return result;
-    }
-
-    songs = dataRows.map(r => {
-        const fields = parseCSVLine(r);
-        const obj = {};
-        HEADERS.forEach((h, i) => {
-            obj[h] = fields[i] || '';
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        songs = data.slice(2).map(r => {
+            const obj = {};
+            HEADERS.forEach((h, i) => {
+                obj[h] = r[i] !== undefined ? String(r[i]).trim() : '';
+            });
+            return obj;
         });
-        return obj;
-    });
-    renderList(songs);
+        filteredSongs = songs;
+        renderList(false); 
+    } catch (err) {
+        console.error("載入失敗:", err);
+    }
 }
 loadSongs();
 
