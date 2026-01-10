@@ -1,6 +1,6 @@
 body {
     font-family: "Noto Sans TC", sans-serif;
-    background: linear-gradient(135deg, #f1e0ff, #d1ceff);
+    background: linear-gradient(144deg, #f0bfff, #dbd9ff);
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -49,6 +49,7 @@ h1 {
 input {
     padding: 12px;
     border-radius: 14px;
+    background-color: #cdaeff;
     border: 2px solid #ffc2d9;
     font-size: 16px;
     outline: none;
@@ -88,7 +89,7 @@ input:focus {
 
 .tag {
     display: inline-block;
-    background: #fd98ff94;
+    background: #d398ff78;
     color: #6e22d3;
     padding: 2px 8px;
     border-radius: 999px;
@@ -98,7 +99,7 @@ input:focus {
 
 .copy-btn {
     border: none;
-    background: #fd98ff94;
+    background: #d398ff78;
     color: #6e22d3;
     border-radius: 999px;
     padding: 4px 10px;

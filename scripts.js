@@ -86,9 +86,9 @@ function renderList(append = false) {
                 draggable="false"> ${song['歌手']}
             </div>
             <div class="meta">
+                <span class="tag">熟練：${starDisplay}</span>
                 <span class="tag">${song['語言']}</span>
                 ${typeTags}
-                <span class="tag">熟練：${starDisplay}</span>
             </div>
         `;
         fragment.appendChild(div);
