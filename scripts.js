@@ -18,6 +18,7 @@ async function loadSongs() {
             });
             return obj;
         });
+
         filteredSongs = songs;
         renderList(false); 
     } catch (err) {
@@ -31,16 +32,12 @@ const resultBox = document.getElementById('result');
 
 input.addEventListener('input', () => {
     const kw = input.value.trim().toLowerCase();
-    if (!kw) {
-        renderList(songs);
-        return;
-    }
-    filteredSongs = songs.filter(song =>
-        SEARCH_FIELDS.some(field =>
+    filteredSongs = allSongs.filter(song =>
+        SEARCH_FIELDS.some(field => 
             song[field]?.toLowerCase().includes(kw)
         )
     );
-    renderList(filteredSongs);
+    renderList(false); // 重新從第一頁渲染
 });
 
 function copyText(text) {
@@ -49,21 +46,23 @@ function copyText(text) {
     });
 }
 
-function renderList(list, append = false) {
-    const resultBox = document.getElementById('result');
+function renderList(append = false) {
     if (!append) {
         resultBox.innerHTML = '';
         displayCount = PAGE_SIZE;
+        resultBox.scrollTop = 0;
     }
-
     const fragment = document.createDocumentFragment();
-    const itemsToShow = list.slice(displayCount - PAGE_SIZE, displayCount);
+    const start = append ? displayCount : 0;
+    const end = Math.min(start + PAGE_SIZE, filteredSongs.length);
+    const slice = filteredSongs.slice(start, end);
 
-    itemsToShow.forEach(song => {
+    slice.forEach(song => {
         const div = document.createElement('div');
         div.className = 'item';
-        const typeTags = song['類型']
-            ? song['類型'].split(',').map(t => `<span class="tag">${t.trim()}</span>`).join(' ')
+        
+        const typeTags = song['類型'] 
+            ? song['類型'].split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('') 
             : '';
 
         div.innerHTML = `
@@ -91,14 +90,13 @@ function renderList(list, append = false) {
     });
 
     resultBox.appendChild(fragment);
+    if (append) displayCount = end;
 }
 
 resultBox.addEventListener('scroll', () => {
     if (resultBox.scrollTop + resultBox.clientHeight >= resultBox.scrollHeight - 20) {
-        const currentList = input.value.trim() ? filteredSongs : songs;
-        if (displayCount < currentList.length) {
-            displayCount += PAGE_SIZE;
-            renderList(currentList, true);
+        if (displayCount < filteredSongs.length) {
+            renderList(true);
         }
     }
 });
