@@ -49,7 +49,7 @@ h1 {
 input {
     padding: 12px;
     border-radius: 14px;
-    background-color: #cdaeff;
+    background-color: #cdaeff78;
     border: 2px solid #ffc2d9;
     font-size: 16px;
     outline: none;
@@ -130,3 +130,4 @@ input:focus {
         transform: translateY(0);
     }
 }
+
