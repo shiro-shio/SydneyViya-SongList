@@ -77,13 +77,13 @@ input:focus {
     margin-bottom: 10px;
     animation: fadeIn .2s ease;
     backdrop-filter: blur(3px);
-    width: 22rem;
+    width: 85%;
     height: 4rem;
 }
 
 .item:hover {
     background: linear-gradient(158deg, #b8abffb5, #dbd9ffb5, #fecaffb5);
-    width: 25rem;
+    width: 95%;
     height: 5rem;
 }
 
