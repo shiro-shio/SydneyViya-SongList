@@ -2,7 +2,6 @@ const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
 const HEADERS = ['語言', '曲名', '歌手', '音源(伴奏)', '熟練', '類型'];
 const API_URL =`https://script.google.com/macros/s/AKfycbzndg2ucDRDrBnej9lTiphmKHKatx8RGLFn-vIFCZKivxthIjvxrfsPBYGYuz8SpWDt/exec`;
 
-let songs = [];
 let filteredSongs = [];
 let displayCount = 20;
 const PAGE_SIZE = 20;
@@ -11,15 +10,13 @@ async function loadSongs() {
     try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        songs = data.slice(2).map(r => {
+        filteredSongs = data.slice(2).map(r => {
             const obj = {};
             HEADERS.forEach((h, i) => {
                 obj[h] = r[i] !== undefined ? String(r[i]).trim() : '';
             });
             return obj;
         });
-
-        filteredSongs = songs;
         renderList(false); 
     } catch (err) {
         console.error("載入失敗:", err);
@@ -37,7 +34,7 @@ input.addEventListener('input', () => {
             song[field]?.toLowerCase().includes(kw)
         )
     );
-    renderList(false); // 重新從第一頁渲染
+    renderList(false);
 });
 
 function copyText(text) {
@@ -65,6 +62,11 @@ function renderList(append = false) {
             ? song['類型'].split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('') 
             : '';
 
+        const score = parseInt(song['熟練']) || 0;
+        const maxStars = 5;
+        const starDisplay = '★'.repeat(Math.max(0, Math.min(score, maxStars))) + 
+                            '☆'.repeat(Math.max(0, maxStars - score));
+
         div.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div class="song">🎵 ${song['曲名']}</div>
@@ -83,7 +85,7 @@ function renderList(append = false) {
             <div class="meta">
                 <span class="tag">${song['語言']}</span>
                 ${typeTags}
-                <span class="tag">熟練：${song['熟練']}</span>
+                <span class="tag">熟練：${starDisplay}</span>
             </div>
         `;
         fragment.appendChild(div);
