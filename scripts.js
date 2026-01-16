@@ -108,27 +108,47 @@ resultBox.addEventListener('scroll', () => {
 
 
 let isDown = false;
-let startY;
-let scrollTop;
+let startY, scrollTop;
+let velocity = 0;
+let lastY = 0;
+let rafId = null;
+
+function applyInertia() {
+    if (Math.abs(velocity) > 0.1) {
+        resultBox.scrollTop -= velocity;
+        velocity *= 0.95;
+        rafId = requestAnimationFrame(applyInertia);
+    }
+}
+
 resultBox.addEventListener('mousedown', (e) => {
     isDown = true;
-    //resultBox.classList.add('active');
+    resultBox.style.cursor = 'grabbing';
     startY = e.pageY - resultBox.offsetTop;
     scrollTop = resultBox.scrollTop;
+    lastY = e.pageY;
+    velocity = 0;
+    cancelAnimationFrame(rafId);
 });
 
 resultBox.addEventListener('mouseleave', () => {
     isDown = false;
+    resultBox.style.cursor = 'grab';
 });
 
 resultBox.addEventListener('mouseup', () => {
     isDown = false;
+    resultBox.style.cursor = 'grab';
+    applyInertia();
 });
 
 resultBox.addEventListener('mousemove', (e) => {
     if (!isDown) return;
     e.preventDefault();
+    const currentY = e.pageY;
+    velocity = currentY - lastY; 
+    lastY = currentY;
     const y = e.pageY - resultBox.offsetTop;
-    const walk = (y - startY) * 1.5;
+    const walk = (y - startY); 
     resultBox.scrollTop = scrollTop - walk;
 });
