@@ -105,3 +105,30 @@ resultBox.addEventListener('scroll', () => {
         }
     }
 });
+
+
+let isDown = false;
+let startY;
+let scrollTop;
+resultBox.addEventListener('mousedown', (e) => {
+    isDown = true;
+    //resultBox.classList.add('active');
+    startY = e.pageY - resultBox.offsetTop;
+    scrollTop = resultBox.scrollTop;
+});
+
+resultBox.addEventListener('mouseleave', () => {
+    isDown = false;
+});
+
+resultBox.addEventListener('mouseup', () => {
+    isDown = false;
+});
+
+resultBox.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const y = e.pageY - resultBox.offsetTop;
+    const walk = (y - startY) * 1.5;
+    resultBox.scrollTop = scrollTop - walk;
+});
