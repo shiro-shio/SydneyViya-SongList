@@ -116,14 +116,13 @@ let rafId = null;
 function applyInertia() {
     if (Math.abs(velocity) > 0.1) {
         resultBox.scrollTop -= velocity;
-        velocity *= 0.95;
+        velocity *= 0.99;
         rafId = requestAnimationFrame(applyInertia);
     }
 }
 
 resultBox.addEventListener('mousedown', (e) => {
     isDown = true;
-    resultBox.style.cursor = 'grabbing';
     startY = e.pageY - resultBox.offsetTop;
     scrollTop = resultBox.scrollTop;
     lastY = e.pageY;
@@ -133,12 +132,10 @@ resultBox.addEventListener('mousedown', (e) => {
 
 resultBox.addEventListener('mouseleave', () => {
     isDown = false;
-    resultBox.style.cursor = 'grab';
 });
 
 window.addEventListener('mouseup', () => {
     isDown = false;
-    resultBox.style.cursor = 'grab';
     applyInertia();
 });
 
