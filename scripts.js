@@ -136,13 +136,13 @@ resultBox.addEventListener('mouseleave', () => {
     resultBox.style.cursor = 'grab';
 });
 
-resultBox.addEventListener('mouseup', () => {
+window.addEventListener('mouseup', () => {
     isDown = false;
     resultBox.style.cursor = 'grab';
     applyInertia();
 });
 
-resultBox.addEventListener('mousemove', (e) => {
+window.addEventListener('mousemove', (e) => {
     if (!isDown) return;
     e.preventDefault();
     const currentY = e.pageY;
