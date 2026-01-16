@@ -71,6 +71,7 @@ function renderList(append = false) {
                             '☆'.repeat(Math.max(0, maxStars - score));
 
         div.innerHTML = `
+            <div class='img_p'></div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div class="song">🎵 ${song['曲名']}</div>
                 <button class="copy-btn" onclick="copyText('${song['曲名']}')">
@@ -116,7 +117,7 @@ let rafId = null;
 function applyInertia() {
     if (Math.abs(velocity) > 0.1) {
         resultBox.scrollTop -= velocity;
-        velocity *= 0.99;
+        velocity *= 0.97;
         rafId = requestAnimationFrame(applyInertia);
     }
 }
