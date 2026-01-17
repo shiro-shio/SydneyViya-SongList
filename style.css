@@ -118,6 +118,17 @@ input:focus {
     font-size: 14px;
     color: #555;
     margin-top: 2px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    gap: 4px;
+    scrollbar-width: none;
+    padding-bottom: 5px;
+    max-width: 75%;
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 .tag {
@@ -127,7 +138,6 @@ input:focus {
     padding: 2px 8px;
     border-radius: 999px;
     font-size: 12px;
-    margin-right: 4px;
 }
 
 .copy-btn {
