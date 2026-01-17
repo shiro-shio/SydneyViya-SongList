@@ -93,7 +93,7 @@ input:focus {
 
 .item:hover {
     background: linear-gradient(158deg, #b8abffb5, #dbd9ffb5, #fecaffb5);
-    width: 95%;
+    /*width: 95%;*/
     height: 5rem;
     border-radius: 25px;
     scale: 1.1;
@@ -244,3 +244,4 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
+
