@@ -95,6 +95,9 @@ input:focus {
     background: linear-gradient(158deg, #b8abffb5, #dbd9ffb5, #fecaffb5);
     width: 95%;
     height: 5rem;
+    border-radius: 25px;
+    scale: 1.1;
+
 }
 
 .img_p {
@@ -166,6 +169,7 @@ input:focus {
 
 .copy-btn:hover {
     background: #e1c6ff85;
+    right: 10px;
 }
 
 @keyframes fadeIn {
