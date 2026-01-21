@@ -1,17 +1,33 @@
 const SEARCH_FIELDS = ['語言', '曲名', '歌手', '熟練', '類型'];
 const HEADERS = ['語言', '曲名', '歌手', '音源(伴奏)', '熟練', '類型'];
-const API_URL =`https://script.google.com/macros/s/AKfycbzndg2ucDRDrBnej9lTiphmKHKatx8RGLFn-vIFCZKivxthIjvxrfsPBYGYuz8SpWDt/exec`;
 
 let songs = [];
 let filteredSongs = [];
 let displayCount = 20;
 const PAGE_SIZE = 20;
+const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
+const GID = 0;
+const CSV_URL =`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
 async function loadSongs() {
     try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        songs = data.slice(2).map(r => {
+        const res = await fetch(CSV_URL);
+        const csvText = await res.text();
+        const regex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
+        const rows = csvText.split(/\r?\n/).filter(line => line.trim() !== "").map(line => {
+            const row = [];
+            const matches = line.matchAll(regex);
+            
+            for (const match of matches) {
+                let value = (match[1] !== undefined) 
+                    ? match[1].replace(/""/g, '"') 
+                    : match[2];
+                
+                row.push(value !== undefined ? value.trim() : "");
+            }
+            return row;
+        });
+        songs = rows.slice(2).map(r => {
             const obj = {};
             HEADERS.forEach((h, i) => {
                 obj[h] = r[i] !== undefined ? String(r[i]).trim() : '';
@@ -21,10 +37,13 @@ async function loadSongs() {
 
         filteredSongs = songs;
         renderList(false); 
+        
     } catch (err) {
         console.error("載入失敗:", err);
     }
 }
+
+
 loadSongs();
 
 const input = document.getElementById('kw');
@@ -87,7 +106,7 @@ function renderList(append = false) {
                 draggable="false"> ${song['歌手']}
             </div>
             <div class="meta">
-                <span class="tag">熟練：${starDisplay}</span>
+                <span class="tag">熟練：${song['熟練']}</span>
                 <span class="tag">${song['語言']}</span>
                 ${typeTags}
             </div>
