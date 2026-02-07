@@ -8,10 +8,13 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background-image: url(https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/refs/heads/main/img/2000_27.webp);
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .card {
-    background: #1800ff2e;
+    background: #ffffff42;
     width: 100%;
     max-width: 460px;
     height: 100vh;
@@ -246,6 +249,7 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
+
 
 
 
