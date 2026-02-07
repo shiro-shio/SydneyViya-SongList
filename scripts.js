@@ -83,7 +83,7 @@ function renderList(append = false) {
         const typeTags = song['類型'] 
             ? song['類型'].split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('') 
             : '';
-
+        const iswarn = song['類型'].includes('版權') ? ' warnwarn' : ''
         const score = parseInt(song['熟練']) || 0;
         const maxStars = 5;
         const starDisplay = '★'.repeat(Math.max(0, Math.min(score, maxStars))) + 
@@ -92,7 +92,7 @@ function renderList(append = false) {
         div.innerHTML = `
             <div class='img_p'></div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div class="song">🎵 ${song['曲名']}</div>
+                <div class="song${iswarn}">🎵 ${song['曲名']}</div>
                 <button class="copy-btn" onclick="copyText('${song['曲名']}')">
                     <img src="https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/main/img/B_copy.svg"
                     class="icon"
@@ -169,3 +169,4 @@ window.addEventListener('mousemove', (e) => {
     const walk = (y - startY); 
     resultBox.scrollTop = scrollTop - walk;
 });
+
