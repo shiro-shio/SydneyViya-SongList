@@ -144,7 +144,9 @@ input:focus {
     border-radius: 999px;
     font-size: 12px;
 }
-
+.warnwarn {
+    color: #ff0000b7;
+}
 .copy-btn {
     border: none;
     background: #d398ff00;
@@ -244,5 +246,6 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
+
 
 
