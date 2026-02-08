@@ -8,6 +8,9 @@
 
 [歌單](https://shiro-shio.github.io/SydneyViya-SongList/)
 
+## EXCEL固定格式
+- 語言 | 曲名 | 歌手 | 音源(伴奏) | 熟練 | 類型
+
 ---
 
 未來版本提供DC帳號登入，直接網頁點歌。
