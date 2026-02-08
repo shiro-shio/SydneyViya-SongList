@@ -48,8 +48,10 @@ loadSongs();
 
 const input = document.getElementById('kw');
 const resultBox = document.getElementById('result');
+let rdsongTimeout = null;
 
 input.addEventListener('input', () => {
+    if (rdsongTimeout) { clearTimeout(rdsongTimeout); }
     const kw = input.value.trim().toLowerCase();
     filteredSongs = songs.filter(song =>
         SEARCH_FIELDS.some(field => 
@@ -60,7 +62,6 @@ input.addEventListener('input', () => {
 });
 
 const rdsong = document.getElementById('rdsong')
-let rdsongTimeout = null;
 rdsong.addEventListener('click', () => {
     if (rdsongTimeout) { clearTimeout(rdsongTimeout); }
     const rs = songs[Math.floor(Math.random() * songs.length)]['曲名'];
@@ -183,6 +184,7 @@ window.addEventListener('mousemove', (e) => {
     const walk = (y - startY); 
     resultBox.scrollTop = scrollTop - walk;
 });
+
 
 
 
