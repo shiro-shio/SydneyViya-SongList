@@ -11,7 +11,10 @@
 <body>
 <div class="card">
     <h1 style="user-select: none;">歌單搜尋~</h1>
-    <input id="kw" placeholder="輸入曲名 / 歌手 / 語言 / 關鍵字" />
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <input id="kw" placeholder="輸入曲名 / 歌手 / 語言 / 關鍵字" />
+        <i class="fa-solid fa-shuffle fa-2xl" style="right: 30px; position: relative; color: #882eff7a;"></i>
+    </div>
     <div class="result" id="result"></div>
     <div class="tooltip-link">
         <a href="https://www.youtube.com/@Sydney_Viya_0525/featured" class="icon-link" data-tooltip="YouTube" target="_blank">
@@ -35,5 +38,6 @@
 <script src="scripts.js?ver=2602080412"></script>
 
 </html>
+
 
 
