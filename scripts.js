@@ -59,6 +59,20 @@ input.addEventListener('input', () => {
     renderList(false);
 });
 
+const rdsong = document.getElementById('rdsong')
+let rdsongTimeout = null;
+rdsong.addEventListener('click', () => {
+    if (rdsongTimeout) { clearTimeout(rdsongTimeout); }
+    const rs = songs[Math.floor(Math.random() * songs.length)]['曲名'];
+    filteredSongs = songs.filter(song => song['曲名'].includes(rs));
+    renderList(false);
+    rdsongTimeout = setTimeout(() => {
+            filteredSongs = songs
+            renderList(false);
+            rdsongTimeout = null;
+        }, 5000);
+})
+
 function copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
         console.log(`已複製：${text}`);
@@ -169,5 +183,6 @@ window.addEventListener('mousemove', (e) => {
     const walk = (y - startY); 
     resultBox.scrollTop = scrollTop - walk;
 });
+
 
 
