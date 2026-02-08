@@ -72,8 +72,8 @@ input {
     outline: none;
     -webkit-appearance: none;
     width: 270px;
-    padding-right: 50px;
-    left: 20px;
+    padding-right: 20px;
+    left: 10px;
     position: relative;
 }
 
@@ -258,6 +258,7 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
+
 
 
 
