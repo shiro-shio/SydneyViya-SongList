@@ -6,6 +6,8 @@
 
 此做模板歌單是Vtuber[希妮薇婭SydneyViya Ch.](https://www.youtube.com/@Sydney_Viya_0525/featured)
 
+[歌單](https://shiro-shio.github.io/SydneyViya-SongList/)
+
 ---
 
 未來版本提供DC帳號登入，直接網頁點歌。
