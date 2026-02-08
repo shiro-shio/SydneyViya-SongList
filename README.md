@@ -4,7 +4,7 @@
 
 搜尋模式可透過任何關鍵字、標籤、歌手快速找到想聽的歌。
 
-此做模板歌單是Vtuber[希妮薇婭SydneyViya Ch.](https://www.youtube.com/@Sydney_Viya_0525/featured)
+此模板歌單是Vtuber [希妮薇婭SydneyViya Ch.](https://www.youtube.com/@Sydney_Viya_0525/featured)
 
 [歌單](https://shiro-shio.github.io/SydneyViya-SongList/)
 
