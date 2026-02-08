@@ -71,6 +71,10 @@ input {
     font-size: 16px;
     outline: none;
     -webkit-appearance: none;
+    width: 270px;
+    padding-right: 50px;
+    left: 20px;
+    position: relative;
 }
 
 input:focus {
@@ -254,6 +258,7 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
+
 
 
 
