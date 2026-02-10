@@ -8,7 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-image: url(https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/refs/heads/main/img/2000_27.webp);
+    background-image: url(./img/2000_27.webp);
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -25,7 +25,7 @@ body {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    /*background-image: url(https://www.popdaily.com.tw/shaper/u/202310/c64f5d34-ff76-4f26-a500-52c36abf4cd7.png);*/
+    /*background-image: url();*/
 }
 
 @media (max-width: 600px) {
@@ -258,6 +258,7 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
+
 
 
 
