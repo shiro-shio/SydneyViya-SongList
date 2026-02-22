@@ -6,7 +6,7 @@
 
 此模板歌單是Vtuber [希妮薇婭SydneyViya Ch.](https://www.youtube.com/@Sydney_Viya_0525/featured)
 
-[歌單](https://shiro-shio.github.io/SydneyViya-SongList/)
+[歌單](https://sydneyviya-songlist.pages.dev/)
 
 ## EXCEL固定格式
 - 語言 | 曲名 | 歌手 | 音源(伴奏) | 熟練 | 類型
