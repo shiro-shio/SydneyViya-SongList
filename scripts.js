@@ -5,9 +5,6 @@ let songs = [];
 let filteredSongs = [];
 let displayCount = 20;
 const PAGE_SIZE = 20;
-//const SHEET_ID = '1QKdoY1acqW-tqk2K5CJZAzC-mtiUpKzWyE6eVfLbZ34';
-//const GID = 0;
-//const CSV_URL =`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 SongUrl = 'https://song-list.shiroshio0507.workers.dev/'
 async function loadSongs() {
     try {
@@ -184,6 +181,7 @@ window.addEventListener('mousemove', (e) => {
     const walk = (y - startY); 
     resultBox.scrollTop = scrollTop - walk;
 });
+
 
 
 
