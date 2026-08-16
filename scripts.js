@@ -77,6 +77,20 @@ function copyText(text) {
     });
 }
 
+function ordersong(user='anonymous' ,artist ,songName) {
+    fetch('/api/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user: user,
+        artist: artist,
+        songName: songName
+      })
+    });
+}
+
 function renderList(append = false) {
     if (!append) {
         resultBox.innerHTML = '';
