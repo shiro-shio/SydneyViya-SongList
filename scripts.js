@@ -119,7 +119,7 @@ function renderList(append = false) {
             <div class='img_p'></div>
             <div style="display:flex; justify-content:space-between; align-items:center; white-space: nowrap;">
                 <div class="song${iswarn}">🎵 ${song['曲名']}</div>
-                <button class="copy-btn" onclick="copyText('${song['曲名']}')">
+                <button class="copy-btn" onclick="ordersong(undefined, '${song['歌手']}', '${song['曲名']}')">
                     <img src="https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/main/img/B_copy.svg"
                     class="icon"
                     draggable="false"
