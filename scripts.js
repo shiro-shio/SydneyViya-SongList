@@ -5,7 +5,7 @@ let songs = [];
 let filteredSongs = [];
 let displayCount = 20;
 const PAGE_SIZE = 20;
-SongUrl = 'https://song-list.shiroshio0507.workers.dev/'
+SongUrl = 'https://song-list.shiroshio0507.workers.dev/api/songs'
 async function loadSongs() {
     try {
         const res = await fetch(SongUrl);
