@@ -77,7 +77,7 @@ function copyText(text) {
     });
 }
 
-function ordersong(user='anonymous' ,artist ,songName) {
+async function ordersong(user='anonymous' ,artist ,songName) {
     const res = await fetch('https://song-list.shiroshio0507.workers.dev/api/order', {
       method: 'POST',
       headers: {
