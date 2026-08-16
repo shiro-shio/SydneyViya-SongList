@@ -78,7 +78,7 @@ function copyText(text) {
 }
 
 function ordersong(user='anonymous' ,artist ,songName) {
-    fetch('https://song-list.shiroshio0507.workers.dev/api/order', {
+    const res = await fetch('https://song-list.shiroshio0507.workers.dev/api/order', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -89,6 +89,8 @@ function ordersong(user='anonymous' ,artist ,songName) {
         songName: songName
       })
     });
+    console.log("status =", res.status);
+    console.log("response =", await res.text());
 }
 
 function renderList(append = false) {
