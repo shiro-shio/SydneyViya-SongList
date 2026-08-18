@@ -104,7 +104,7 @@
             width: 100%;
             border-collapse: collapse;
 
-            min-width: 650px;
+            /*min-width: 650px;*/
         }
 
         thead {
@@ -139,7 +139,7 @@
         /* 欄位 */
 
         .index {
-            width: 70px;
+            width: 30px;
 
             color: #aaa4af;
             font-weight: 600;
@@ -340,7 +340,7 @@
 
             th,
             td {
-                padding: 12px;
+                padding: 7px;
             }
         }
     </style>
@@ -490,53 +490,40 @@ const refreshButton =
    載入今日點歌
    ========================================================= */
 
+const AUTO_REFRESH_INTERVAL = 60 * 1000; // 1 分鐘
+
+let refreshTimer = null;
+let isLoading = false;
+
 async function loadOrders() {
 
-    orderList.innerHTML = `
-        <tr>
-            <td
-                colspan="4"
-                class="message"
-            >
-                載入中...
-            </td>
-        </tr>
-    `;
+    // 防止手動刷新與自動刷新同時發送請求
+    if (isLoading) {
+        return;
+    }
+
+    isLoading = true;
 
     try {
 
-        const response =
-            await fetch(API_URL);
+        const response = await fetch(API_URL);
 
         if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
+            throw new Error(`HTTP ${response.status}`);
         }
 
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         if (!data.success) {
-
-            throw new Error(
-                "API 回傳 success=false"
-            );
-
+            throw new Error("API 回傳 success=false");
         }
-
 
         const orders =
             Array.isArray(data.orders)
                 ? data.orders
                 : [];
 
-
         renderOrders(orders);
-
 
     } catch (error) {
 
@@ -545,24 +532,33 @@ async function loadOrders() {
             error
         );
 
-        orderCount.textContent =
-            "載入失敗";
+        /*
+         * 注意：
+         * 自動刷新失敗時不要清掉目前畫面。
+         * 保留使用者目前看到的資料。
+         */
 
-        orderList.innerHTML = `
-            <tr>
-                <td
-                    colspan="4"
-                    class="message error"
-                >
-                    無法取得點歌資料
-                </td>
-            </tr>
-        `;
+    } finally {
 
+        isLoading = false;
+
+        scheduleAutoRefresh();
     }
-
 }
 
+function scheduleAutoRefresh() {
+
+    // 清除上一個計時器
+    if (refreshTimer) {
+        clearTimeout(refreshTimer);
+    }
+
+    refreshTimer = setTimeout(() => {
+
+        loadOrders();
+
+    }, AUTO_REFRESH_INTERVAL);
+}
 
 /* =========================================================
    Render
@@ -628,10 +624,35 @@ function renderOrders(orders) {
    ========================================================= */
 
 function createOrderRow(order, index) {
-    const status = order.status;
+    const displayUser =
+        order.user_name === "anonymous"
+            ? "匿名"
+            : (order.user_name || "匿名");
+
+    const status =
+        String(order.status || "").trim();
+
+    const statusInfo =
+        STATUS[status];
+
+    if (!statusInfo) {
+
+        console.error(
+            "未知的 status:",
+            order.status,
+            order
+        );
+
+        return "";
+    }
+
 
     return `
-        <tr data-id="${escapeHtml(order.id)}">
+        <tr
+            data-id="${escapeHtml(order.id)}"
+            data-song-name="${escapeHtml(order.song_name)}"
+            data-user="${escapeHtml(order.user_name || "")}"
+        >
 
             <td class="index">
                 #${index + 1}
@@ -644,25 +665,28 @@ function createOrderRow(order, index) {
             </td>
 
             <td class="user">
-                👤 ${escapeHtml(order.user_name || "anonymous")}
+                👤 ${escapeHtml(displayUser)}
             </td>
 
             <td>
+
                 <div
                     class="status-container"
-                    data-status="${escapeHtml(status)}"
+                    data-status="${status}"
                 >
 
                     <button
                         type="button"
-                        class="status-button ${STATUS[status].className}"
+                        class="status-button ${statusInfo.className}"
                         data-action="toggle"
                     >
-                        ${STATUS[status].icon}
-                        ${STATUS[status].label}
+                        ${statusInfo.icon}
+                        ${statusInfo.label}
                     </button>
 
+
                     <div class="status-menu">
+
                         ${Object.entries(STATUS)
                             .map(([key, value]) => `
                                 <button
@@ -675,7 +699,9 @@ function createOrderRow(order, index) {
                                 </button>
                             `)
                             .join("")}
+
                     </div>
+
 
                     <button
                         type="button"
@@ -686,11 +712,13 @@ function createOrderRow(order, index) {
                     </button>
 
                 </div>
+
             </td>
 
         </tr>
     `;
 }
+
 
 /* =========================================================
    狀態 UI 事件
@@ -872,32 +900,32 @@ function bindStatusEvents() {
    更新狀態
    ========================================================= */
 
-async function updateOrderStatus(
-    updateButton
-) {
+async function updateOrderStatus(updateButton) {
 
     const container =
-        updateButton.closest(
-            ".status-container"
-        );
-
+        updateButton.closest(".status-container");
 
     const row =
         updateButton.closest("tr");
 
-
-    /*
-     * D1 永久 ID
-     *
-     * 使用 data-id
-     */
+    // ==========================================
+    // 從目前這一列取得資料
+    // ==========================================
 
     const id =
         row.dataset.id;
 
-
     const newStatus =
         container.dataset.pendingStatus;
+
+    // 歌手 - 歌名那一欄
+    // 注意：Worker 只需要 song_name
+    const songName =
+        row.dataset.songName;
+
+    // 點歌人
+    const user =
+        row.dataset.user;
 
 
     if (!newStatus) {
@@ -905,61 +933,61 @@ async function updateOrderStatus(
     }
 
 
-    /*
-     * 防止重複點擊
-     */
+    // ==========================================
+    // 防止重複點擊
+    // ==========================================
 
     updateButton.disabled = true;
-
-    updateButton.textContent =
-        "更新中...";
+    updateButton.textContent = "更新中...";
 
 
     try {
 
-        /*
-         * 注意：
-         *
-         * 這裡假設你的 Worker
-         * PATCH endpoint 是：
-         *
-         * PATCH /api/order/:id
-         */
+        const response = await fetch(
+            `https://song-list.shiroshio0507.workers.dev/api/order/${encodeURIComponent(id)}`,
+            {
+                method: "PATCH",
 
-        const response =
-            await fetch(
-                `https://song-list.shiroshio0507.workers.dev/api/order/${encodeURIComponent(id)}`,
-                {
-                    method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                body: JSON.stringify({
+                    status: newStatus,
 
-                    body: JSON.stringify({
-                        status: newStatus
-                    })
-                }
-            );
+                    // 必須與 D1 完全一致
+                    songName: songName,
+
+                    // 必須與 D1 完全一致
+                    user: user
+                })
+            }
+        );
 
 
-        if (!response.ok) {
+        const data = await response.json();
+
+
+        // ==========================================
+        // Worker 回傳錯誤
+        // ==========================================
+
+        if (!response.ok || !data.success) {
 
             throw new Error(
+                data.message ||
                 `HTTP ${response.status}`
             );
 
         }
 
 
-        /*
-         * 更新成功
-         */
+        // ==========================================
+        // 更新成功
+        // ==========================================
 
         container.dataset.status =
             newStatus;
-
 
         delete container.dataset.pendingStatus;
 
@@ -968,45 +996,41 @@ async function updateOrderStatus(
             .classList
             .remove("visible");
 
+        updateButton.disabled = false;
+        updateButton.textContent = "更新";
 
-        updateButton.disabled =
-            false;
 
-        updateButton.textContent =
-            "更新";
+        console.log(
+            `訂單 #${id} 狀態更新成功`
+        );
 
 
     } catch (error) {
 
         console.error(
-            "更新狀態失敗:",
+            "更新點歌狀態失敗:",
             error
         );
 
 
+        updateButton.disabled = false;
+        updateButton.textContent = "更新";
+
+
         /*
-         * 更新失敗：
-         * 重新載入 API，
-         * 讓畫面恢復成伺服器實際狀態。
+         * 重新抓 API
+         *
+         * 讓畫面恢復成 D1 真正的狀態。
          */
-
-        updateButton.disabled =
-            false;
-
-        updateButton.textContent =
-            "更新";
-
 
         await loadOrders();
 
+
         alert(
-            "更新狀態失敗，請稍後再試。"
+            `狀態更新失敗\n${error.message}`
         );
-
     }
-
 }
-
 
 /* =========================================================
    關閉所有下拉選單
@@ -1062,7 +1086,9 @@ document.addEventListener(
 
 refreshButton.addEventListener(
     "click",
-    loadOrders
+    async () => {
+        await loadOrders();
+    }
 );
 
 
