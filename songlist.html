@@ -70,6 +70,155 @@
             font-size: 13px;
         }
 
+        /* =========================
+           Header 操作區
+           ========================= */
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* =========================
+           篩選按鈕
+           ========================= */
+
+        .filter-wrapper {
+            position: relative;
+        }
+
+        .filter-button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            border: 1px solid #e3dfe7;
+            background: white;
+
+            padding: 9px 13px;
+            border-radius: 9px;
+
+            color: #625d68;
+            cursor: pointer;
+
+            transition: 0.15s;
+        }
+
+        .filter-button:hover {
+            background: #f8f7fa;
+        }
+
+        .filter-button.active {
+            background: #eee8f7;
+            border-color: #ddd1ec;
+            color: #775c9e;
+        }
+
+        .filter-badge {
+            display: none;
+
+            min-width: 18px;
+            height: 18px;
+
+            padding: 0 5px;
+
+            border-radius: 999px;
+
+            background: #8d72b8;
+            color: white;
+
+            font-size: 11px;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-badge.visible {
+            display: flex;
+        }
+
+        /* =========================
+           篩選選單
+           ========================= */
+
+        .filter-menu {
+            position: absolute;
+
+            top: calc(100% + 7px);
+            right: 0;
+
+            z-index: 200;
+
+            width: 190px;
+
+            padding: 8px;
+
+            border: 1px solid #e5e0e8;
+            border-radius: 11px;
+
+            background: white;
+
+            box-shadow:
+                0 10px 30px rgba(40, 30, 50, 0.12);
+
+            display: none;
+        }
+
+        .filter-menu.open {
+            display: block;
+        }
+
+        .filter-title {
+            padding: 6px 8px 8px;
+
+            color: #77717e;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            width: 100%;
+
+            padding: 9px 8px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            color: #59535f;
+
+            font-size: 13px;
+        }
+
+        .filter-option:hover {
+            background: #f6f3f8;
+        }
+
+        .filter-option input {
+            width: 15px;
+            height: 15px;
+
+            margin: 0;
+
+            accent-color: #8d72b8;
+
+            cursor: pointer;
+        }
+
+        .filter-option-icon {
+            width: 18px;
+        }
+
+        /* =========================
+           重新整理
+           ========================= */
+
         .refresh-button {
             border: 1px solid #e3dfe7;
             background: white;
@@ -103,8 +252,6 @@
         table {
             width: 100%;
             border-collapse: collapse;
-
-            /*min-width: 650px;*/
         }
 
         thead {
@@ -214,7 +361,7 @@
         }
 
         /* =========================
-           Dropdown
+           Status Dropdown
            ========================= */
 
         .status-menu {
@@ -321,6 +468,7 @@
            ========================= */
 
         @media (max-width: 600px) {
+
             .container {
                 width: calc(100% - 20px);
                 margin: 20px auto;
@@ -334,6 +482,14 @@
                 font-size: 19px;
             }
 
+            .header-actions {
+                gap: 5px;
+            }
+
+            .filter-button {
+                padding: 8px 10px;
+            }
+
             .refresh-button {
                 padding: 8px 10px;
             }
@@ -341,6 +497,10 @@
             th,
             td {
                 padding: 7px;
+            }
+
+            .filter-menu {
+                right: 0;
             }
         }
     </style>
@@ -375,12 +535,114 @@
 
         </div>
 
-        <button
-            class="refresh-button"
-            id="refreshButton"
-        >
-            ↻ 重新整理
-        </button>
+
+        <!-- =========================
+             Header 操作
+             ========================= -->
+
+        <div class="header-actions">
+
+            <!-- 篩選 -->
+
+            <div class="filter-wrapper">
+
+                <button
+                    type="button"
+                    class="filter-button"
+                    id="filterButton"
+                >
+                    ☰ 篩選
+
+                    <span
+                        class="filter-badge"
+                        id="filterBadge"
+                    >
+                        0
+                    </span>
+                </button>
+
+
+                <div
+                    class="filter-menu"
+                    id="filterMenu"
+                >
+
+                    <div class="filter-title">
+                        篩選
+                    </div>
+
+
+                    <label class="filter-option">
+
+                        <input
+                            type="checkbox"
+                            value="queued"
+                            data-filter-status
+                        >
+
+                        <span class="filter-option-icon">
+                            🟣
+                        </span>
+
+                        <span>
+                            排隊
+                        </span>
+
+                    </label>
+
+
+                    <label class="filter-option">
+
+                        <input
+                            type="checkbox"
+                            value="completed"
+                            data-filter-status
+                        >
+
+                        <span class="filter-option-icon">
+                            🟢
+                        </span>
+
+                        <span>
+                            完成
+                        </span>
+
+                    </label>
+
+
+                    <label class="filter-option">
+
+                        <input
+                            type="checkbox"
+                            value="cancelled"
+                            data-filter-status
+                        >
+
+                        <span class="filter-option-icon">
+                            🔴
+                        </span>
+
+                        <span>
+                            取消
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- 重新整理 -->
+
+            <button
+                class="refresh-button"
+                id="refreshButton"
+            >
+                ↻ 重新整理
+            </button>
+
+        </div>
 
     </header>
 
@@ -396,6 +658,7 @@
             <thead>
 
                 <tr>
+
                     <th class="index">
                         序號
                     </th>
@@ -411,19 +674,23 @@
                     <th>
                         狀態
                     </th>
+
                 </tr>
 
             </thead>
 
+
             <tbody id="orderList">
 
                 <tr>
+
                     <td
                         colspan="4"
                         class="message"
                     >
                         載入中...
                     </td>
+
                 </tr>
 
             </tbody>
@@ -445,6 +712,10 @@ const API_URL =
     "https://song-list.shiroshio0507.workers.dev/api/songlist";
 
 
+const PATCH_API_URL =
+    "https://song-list.shiroshio0507.workers.dev/api/order";
+
+
 /* =========================================================
    狀態設定
    ========================================================= */
@@ -452,7 +723,7 @@ const API_URL =
 const STATUS = {
 
     queued: {
-        label: "排隊中",
+        label: "排隊",
         className: "queued",
         icon: "🟣"
     },
@@ -485,15 +756,62 @@ const orderCount =
 const refreshButton =
     document.getElementById("refreshButton");
 
+const filterButton =
+    document.getElementById("filterButton");
+
+const filterMenu =
+    document.getElementById("filterMenu");
+
+const filterBadge =
+    document.getElementById("filterBadge");
+
+
+/* =========================================================
+   資料
+   ========================================================= */
+
+/*
+ * API 取得的完整資料。
+ *
+ * 篩選不會修改這份資料，
+ * 這樣重新整理或切換篩選時可以直接重新 Render。
+ */
+
+let allOrders = [];
+
+
+/*
+ * 使用 Set 保存目前被排除的 status。
+ *
+ * 例如：
+ *
+ * Set {
+ *     "completed",
+ *     "cancelled"
+ * }
+ *
+ * 代表：
+ * 排除完成 + 排除取消
+ */
+
+const excludedStatuses = new Set();
+
+
+/* =========================================================
+   自動刷新
+   ========================================================= */
+
+const AUTO_REFRESH_INTERVAL =
+    60 * 1000; // 1 分鐘
+
+let refreshTimer = null;
+
+let isLoading = false;
+
 
 /* =========================================================
    載入今日點歌
    ========================================================= */
-
-const AUTO_REFRESH_INTERVAL = 60 * 1000; // 1 分鐘
-
-let refreshTimer = null;
-let isLoading = false;
 
 async function loadOrders() {
 
@@ -504,26 +822,59 @@ async function loadOrders() {
 
     isLoading = true;
 
+
     try {
 
-        const response = await fetch(API_URL);
+        const response =
+            await fetch(API_URL);
+
 
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+
         }
 
-        const data = await response.json();
+
+        const data =
+            await response.json();
+
 
         if (!data.success) {
-            throw new Error("API 回傳 success=false");
+
+            throw new Error(
+                "API 回傳 success=false"
+            );
+
         }
 
-        const orders =
+
+        allOrders =
             Array.isArray(data.orders)
                 ? data.orders
                 : [];
 
-        renderOrders(orders);
+
+        /*
+         * API 已經依 created_at ASC，
+         * 這裡再保險排序一次。
+         */
+
+        allOrders.sort(
+            (a, b) =>
+                new Date(a.created_at) -
+                new Date(b.created_at)
+        );
+
+
+        /*
+         * 使用目前篩選條件重新顯示。
+         */
+
+        renderOrders();
+
 
     } catch (error) {
 
@@ -532,10 +883,9 @@ async function loadOrders() {
             error
         );
 
+
         /*
-         * 注意：
-         * 自動刷新失敗時不要清掉目前畫面。
-         * 保留使用者目前看到的資料。
+         * 自動刷新失敗時不要清除目前畫面。
          */
 
     } finally {
@@ -543,43 +893,117 @@ async function loadOrders() {
         isLoading = false;
 
         scheduleAutoRefresh();
+
     }
+
 }
+
+
+/* =========================================================
+   自動刷新計時器
+   ========================================================= */
 
 function scheduleAutoRefresh() {
 
-    // 清除上一個計時器
     if (refreshTimer) {
-        clearTimeout(refreshTimer);
+
+        clearTimeout(
+            refreshTimer
+        );
+
     }
 
-    refreshTimer = setTimeout(() => {
 
-        loadOrders();
+    refreshTimer =
+        setTimeout(
+            () => {
 
-    }, AUTO_REFRESH_INTERVAL);
+                loadOrders();
+
+            },
+            AUTO_REFRESH_INTERVAL
+        );
+
 }
+
+
+/* =========================================================
+   套用篩選
+   ========================================================= */
+
+function getFilteredOrders() {
+
+    return allOrders.filter(
+        order => {
+
+            const status =
+                String(
+                    order.status || ""
+                ).trim();
+
+
+            /*
+             * 如果 status 在 excludedStatuses
+             * 裡面，就排除。
+             */
+
+            return !excludedStatuses.has(
+                status
+            );
+
+        }
+    );
+
+}
+
 
 /* =========================================================
    Render
    ========================================================= */
 
-function renderOrders(orders) {
+function renderOrders() {
+
+    const orders =
+        getFilteredOrders();
+
+
+    /*
+     * 顯示篩選後的數量。
+     */
 
     orderCount.textContent =
         `${orders.length} 首`;
 
 
+    /* =========================
+       沒有資料
+       ========================= */
+
     if (orders.length === 0) {
+
+        /*
+         * 區分：
+         *
+         * 1. 今天完全沒有點歌
+         * 2. 有點歌，但被篩選掉
+         */
+
+        const message =
+            allOrders.length === 0
+                ? "今天還沒有點歌"
+                : "沒有符合篩選條件的點歌";
+
 
         orderList.innerHTML = `
             <tr>
+
                 <td
                     colspan="4"
                     class="message"
                 >
-                    今天還沒有點歌
+                    ${message}
                 </td>
+
             </tr>
         `;
 
@@ -587,32 +1011,21 @@ function renderOrders(orders) {
     }
 
 
-    /*
-     * API 本身已經 ORDER BY created_at ASC
-     * 這裡再排序一次，避免前端 API 改動後順序錯誤。
-     */
-
-    orders.sort(
-        (a, b) =>
-            new Date(a.created_at) -
-            new Date(b.created_at)
-    );
-
+    /* =========================
+       Render
+       ========================= */
 
     orderList.innerHTML =
         orders
-            .map((order, index) =>
-                createOrderRow(
-                    order,
-                    index
-                )
+            .map(
+                (order, index) =>
+                    createOrderRow(
+                        order,
+                        index
+                    )
             )
             .join("");
 
-
-    /*
-     * 綁定狀態按鈕
-     */
 
     bindStatusEvents();
 
@@ -623,17 +1036,40 @@ function renderOrders(orders) {
    建立單筆資料
    ========================================================= */
 
-function createOrderRow(order, index) {
+function createOrderRow(
+    order,
+    index
+) {
+
+    /*
+     * anonymous → 顯示「匿名」
+     *
+     * 但 data-user 必須保留原本的
+     * anonymous，PATCH 才能通過 Worker 驗證。
+     */
+
     const displayUser =
         order.user_name === "anonymous"
             ? "匿名"
-            : (order.user_name || "匿名");
+            : (
+                order.user_name ||
+                "匿名"
+            );
+
 
     const status =
-        String(order.status || "").trim();
+        String(
+            order.status || ""
+        ).trim();
+
 
     const statusInfo =
         STATUS[status];
+
+
+    /*
+     * 防止未知 status 讓整個列表崩潰。
+     */
 
     if (!statusInfo) {
 
@@ -644,10 +1080,12 @@ function createOrderRow(order, index) {
         );
 
         return "";
+
     }
 
 
     return `
+
         <tr
             data-id="${escapeHtml(order.id)}"
             data-song-name="${escapeHtml(order.song_name)}"
@@ -658,15 +1096,22 @@ function createOrderRow(order, index) {
                 #${index + 1}
             </td>
 
+
             <td class="song">
+
                 ${escapeHtml(order.artist)}
                 -
                 ${escapeHtml(order.song_name)}
+
             </td>
 
+
             <td class="user">
+
                 👤 ${escapeHtml(displayUser)}
+
             </td>
+
 
             <td>
 
@@ -680,24 +1125,32 @@ function createOrderRow(order, index) {
                         class="status-button ${statusInfo.className}"
                         data-action="toggle"
                     >
+
                         ${statusInfo.icon}
                         ${statusInfo.label}
+
                     </button>
 
 
                     <div class="status-menu">
 
                         ${Object.entries(STATUS)
-                            .map(([key, value]) => `
-                                <button
-                                    type="button"
-                                    class="status-option"
-                                    data-status="${key}"
-                                >
-                                    ${value.icon}
-                                    ${value.label}
-                                </button>
-                            `)
+                            .map(
+                                ([key, value]) => `
+
+                                    <button
+                                        type="button"
+                                        class="status-option"
+                                        data-status="${key}"
+                                    >
+
+                                        ${value.icon}
+                                        ${value.label}
+
+                                    </button>
+
+                                `
+                            )
                             .join("")}
 
                     </div>
@@ -716,7 +1169,9 @@ function createOrderRow(order, index) {
             </td>
 
         </tr>
+
     `;
+
 }
 
 
@@ -727,42 +1182,47 @@ function createOrderRow(order, index) {
 function bindStatusEvents() {
 
     /*
-     * 開關下拉選單
+     * 開關狀態下拉選單
      */
 
     document
         .querySelectorAll(
             '[data-action="toggle"]'
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                event => {
+                button.addEventListener(
+                    "click",
+                    event => {
 
-                    event.stopPropagation();
+                        event.stopPropagation();
 
-                    const container =
-                        button.closest(
-                            ".status-container"
+
+                        const container =
+                            button.closest(
+                                ".status-container"
+                            );
+
+
+                        closeAllMenus(
+                            container
                         );
 
-                    closeAllMenus(
+
                         container
-                    );
+                            .querySelector(
+                                ".status-menu"
+                            )
+                            .classList.toggle(
+                                "open"
+                            );
 
-                    container
-                        .querySelector(
-                            ".status-menu"
-                        )
-                        .classList.toggle(
-                            "open"
-                        );
+                    }
+                );
 
-                }
-            );
-
-        });
+            }
+        );
 
 
     /*
@@ -773,101 +1233,103 @@ function bindStatusEvents() {
         .querySelectorAll(
             ".status-option"
         )
-        .forEach(option => {
+        .forEach(
+            option => {
 
-            option.addEventListener(
-                "click",
-                () => {
+                option.addEventListener(
+                    "click",
+                    () => {
 
-                    const container =
-                        option.closest(
-                            ".status-container"
-                        );
-
-                    const newStatus =
-                        option.dataset.status;
+                        const container =
+                            option.closest(
+                                ".status-container"
+                            );
 
 
-                    /*
-                     * 取得目前狀態
-                     */
-
-                    const oldStatus =
-                        container.dataset.status;
+                        const newStatus =
+                            option.dataset.status;
 
 
-                    /*
-                     * 如果沒有改變，
-                     * 不顯示更新按鈕。
-                     */
+                        const oldStatus =
+                            container.dataset.status;
 
-                    if (
-                        newStatus === oldStatus
-                    ) {
+
+                        /*
+                         * 沒有改變狀態
+                         */
+
+                        if (
+                            newStatus ===
+                            oldStatus
+                        ) {
+
+                            container
+                                .querySelector(
+                                    ".status-menu"
+                                )
+                                .classList
+                                .remove(
+                                    "open"
+                                );
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * 暫存新狀態。
+                         *
+                         * 此時還沒有 PATCH。
+                         */
+
+                        container.dataset.pendingStatus =
+                            newStatus;
+
+
+                        const button =
+                            container.querySelector(
+                                ".status-button"
+                            );
+
+
+                        button.className =
+                            `status-button ${STATUS[newStatus].className}`;
+
+
+                        button.innerHTML =
+                            `${STATUS[newStatus].icon}
+                             ${STATUS[newStatus].label}`;
+
+
+                        /*
+                         * 顯示更新按鈕
+                         */
+
+                        container
+                            .querySelector(
+                                ".update-button"
+                            )
+                            .classList
+                            .add(
+                                "visible"
+                            );
+
 
                         container
                             .querySelector(
                                 ".status-menu"
                             )
-                            .classList.remove(
+                            .classList
+                            .remove(
                                 "open"
                             );
 
-                        return;
-
                     }
+                );
 
-
-                    /*
-                     * 暫存新狀態
-                     *
-                     * 注意：
-                     * 這裡還沒有 PATCH。
-                     */
-
-                    container.dataset.pendingStatus =
-                        newStatus;
-
-
-                    const button =
-                        container.querySelector(
-                            ".status-button"
-                        );
-
-
-                    button.className =
-                        `status-button ${STATUS[newStatus].className}`;
-
-                    button.innerHTML =
-                        `${STATUS[newStatus].icon}
-                         ${STATUS[newStatus].label}`;
-
-
-                    /*
-                     * 顯示更新按鈕
-                     */
-
-                    container
-                        .querySelector(
-                            ".update-button"
-                        )
-                        .classList.add(
-                            "visible"
-                        );
-
-
-                    container
-                        .querySelector(
-                            ".status-menu"
-                        )
-                        .classList.remove(
-                            "open"
-                        );
-
-                }
-            );
-
-        });
+            }
+        );
 
 
     /*
@@ -878,20 +1340,22 @@ function bindStatusEvents() {
         .querySelectorAll(
             '[data-action="update"]'
         )
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    updateOrderStatus(
-                        button
-                    );
+                        updateOrderStatus(
+                            button
+                        );
 
-                }
-            );
+                    }
+                );
 
-        });
+            }
+        );
 
 }
 
@@ -900,30 +1364,40 @@ function bindStatusEvents() {
    更新狀態
    ========================================================= */
 
-async function updateOrderStatus(updateButton) {
+async function updateOrderStatus(
+    updateButton
+) {
 
     const container =
-        updateButton.closest(".status-container");
+        updateButton.closest(
+            ".status-container"
+        );
+
 
     const row =
         updateButton.closest("tr");
 
-    // ==========================================
-    // 從目前這一列取得資料
-    // ==========================================
 
     const id =
         row.dataset.id;
 
+
     const newStatus =
         container.dataset.pendingStatus;
 
-    // 歌手 - 歌名那一欄
-    // 注意：Worker 只需要 song_name
+
+    /*
+     * Worker 需要：
+     *
+     * 1. status
+     * 2. songName
+     * 3. user
+     */
+
     const songName =
         row.dataset.songName;
 
-    // 點歌人
+
     const user =
         row.dataset.user;
 
@@ -933,46 +1407,49 @@ async function updateOrderStatus(updateButton) {
     }
 
 
-    // ==========================================
-    // 防止重複點擊
-    // ==========================================
-
     updateButton.disabled = true;
-    updateButton.textContent = "更新中...";
+
+    updateButton.textContent =
+        "更新中...";
 
 
     try {
 
-        const response = await fetch(
-            `https://song-list.shiroshio0507.workers.dev/api/order/${encodeURIComponent(id)}`,
-            {
-                method: "PATCH",
+        const response =
+            await fetch(
+                `${PATCH_API_URL}/${encodeURIComponent(id)}`,
+                {
+                    method: "PATCH",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify({
-                    status: newStatus,
+                    body: JSON.stringify({
 
-                    // 必須與 D1 完全一致
-                    songName: songName,
+                        status:
+                            newStatus,
 
-                    // 必須與 D1 完全一致
-                    user: user
-                })
-            }
-        );
+                        songName:
+                            songName,
+
+                        user:
+                            user
+
+                    })
+                }
+            );
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
 
-        // ==========================================
-        // Worker 回傳錯誤
-        // ==========================================
-
-        if (!response.ok || !data.success) {
+        if (
+            !response.ok ||
+            !data.success
+        ) {
 
             throw new Error(
                 data.message ||
@@ -982,22 +1459,61 @@ async function updateOrderStatus(updateButton) {
         }
 
 
-        // ==========================================
-        // 更新成功
-        // ==========================================
+        /*
+         * 更新成功。
+         */
 
         container.dataset.status =
             newStatus;
+
 
         delete container.dataset.pendingStatus;
 
 
         updateButton
             .classList
-            .remove("visible");
+            .remove(
+                "visible"
+            );
 
-        updateButton.disabled = false;
-        updateButton.textContent = "更新";
+
+        updateButton.disabled =
+            false;
+
+
+        updateButton.textContent =
+            "更新";
+
+
+        /*
+         * 同步本地資料。
+         *
+         * 這樣不用重新 GET API，
+         * 畫面上的篩選也會維持。
+         */
+
+        const targetOrder =
+            allOrders.find(
+                order =>
+                    String(order.id) ===
+                    String(id)
+            );
+
+
+        if (targetOrder) {
+
+            targetOrder.status =
+                newStatus;
+
+        }
+
+
+        /*
+         * 如果剛剛修改成被排除的狀態，
+         * 立即從畫面移除。
+         */
+
+        renderOrders();
 
 
         console.log(
@@ -1013,14 +1529,16 @@ async function updateOrderStatus(updateButton) {
         );
 
 
-        updateButton.disabled = false;
-        updateButton.textContent = "更新";
+        updateButton.disabled =
+            false;
+
+
+        updateButton.textContent =
+            "更新";
 
 
         /*
-         * 重新抓 API
-         *
-         * 讓畫面恢復成 D1 真正的狀態。
+         * 重新取得伺服器資料。
          */
 
         await loadOrders();
@@ -1029,39 +1547,193 @@ async function updateOrderStatus(updateButton) {
         alert(
             `狀態更新失敗\n${error.message}`
         );
+
     }
+
 }
 
+
 /* =========================================================
-   關閉所有下拉選單
+   篩選 UI
+   ========================================================= */
+
+/*
+ * 開關篩選選單
+ */
+
+filterButton.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+
+        closeAllMenus();
+
+
+        filterMenu
+            .classList
+            .toggle(
+                "open"
+            );
+
+    }
+);
+
+
+/*
+ * 篩選 checkbox
+ */
+
+document
+    .querySelectorAll(
+        "[data-filter-status]"
+    )
+    .forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                () => {
+
+                    const status =
+                        checkbox.value;
+
+
+                    if (
+                        checkbox.checked
+                    ) {
+
+                        excludedStatuses.add(
+                            status
+                        );
+
+                    } else {
+
+                        excludedStatuses.delete(
+                            status
+                        );
+
+                    }
+
+
+                    updateFilterUI();
+
+                    renderOrders();
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   更新篩選 UI
+   ========================================================= */
+
+function updateFilterUI() {
+
+    const count =
+        excludedStatuses.size;
+
+
+    /*
+     * 顯示 / 隱藏數字 Badge
+     */
+
+    if (count > 0) {
+
+        filterBadge.textContent =
+            count;
+
+        filterBadge
+            .classList
+            .add(
+                "visible"
+            );
+
+        filterButton
+            .classList
+            .add(
+                "active"
+            );
+
+    } else {
+
+        filterBadge
+            .classList
+            .remove(
+                "visible"
+            );
+
+        filterButton
+            .classList
+            .remove(
+                "active"
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   關閉所有選單
    ========================================================= */
 
 function closeAllMenus(
     except = null
 ) {
 
+    /*
+     * 關閉狀態選單
+     */
+
     document
         .querySelectorAll(
             ".status-menu.open"
         )
-        .forEach(menu => {
+        .forEach(
+            menu => {
 
-            const container =
-                menu.closest(
-                    ".status-container"
-                );
+                const container =
+                    menu.closest(
+                        ".status-container"
+                    );
 
-            if (
-                container !== except
-            ) {
 
-                menu.classList.remove(
-                    "open"
-                );
+                if (
+                    container !== except
+                ) {
+
+                    menu
+                        .classList
+                        .remove(
+                            "open"
+                        );
+
+                }
 
             }
+        );
 
-        });
+
+    /*
+     * 關閉篩選選單
+     */
+
+    if (
+        except !== filterMenu
+    ) {
+
+        filterMenu
+            .classList
+            .remove(
+                "open"
+            );
+
+    }
 
 }
 
@@ -1087,24 +1759,40 @@ document.addEventListener(
 refreshButton.addEventListener(
     "click",
     async () => {
+
         await loadOrders();
+
     }
 );
 
 
 /* =========================================================
    HTML Escape
-   防止 API 資料直接注入 HTML
    ========================================================= */
 
 function escapeHtml(value) {
 
     return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
