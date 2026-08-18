@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>今日點歌</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f5f7;
+            color: #29262f;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Noto Sans TC",
+                sans-serif;
+        }
+
+        .container {
+            width: min(1000px, calc(100% - 32px));
+            margin: 40px auto;
+        }
+
+        /* =========================
+           Header
+           ========================= */
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+            background: #eee8f7;
+
+            font-size: 20px;
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .count {
+            margin-top: 3px;
+            color: #918c98;
+            font-size: 13px;
+        }
+
+        .refresh-button {
+            border: 1px solid #e3dfe7;
+            background: white;
+
+            padding: 9px 14px;
+            border-radius: 9px;
+
+            color: #625d68;
+            cursor: pointer;
+
+            transition: 0.15s;
+        }
+
+        .refresh-button:hover {
+            background: #f8f7fa;
+        }
+
+        /* =========================
+           Table
+           ========================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+
+            background: white;
+
+            border: 1px solid #e8e4eb;
+            border-radius: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            min-width: 650px;
+        }
+
+        thead {
+            background: #faf9fb;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+
+            text-align: left;
+
+            border-bottom: 1px solid #eeeaf0;
+
+            font-size: 14px;
+        }
+
+        th {
+            color: #77717e;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #fcfbfd;
+        }
+
+        /* 欄位 */
+
+        .index {
+            width: 70px;
+
+            color: #aaa4af;
+            font-weight: 600;
+        }
+
+        .song {
+            font-weight: 600;
+        }
+
+        .user {
+            color: #68616f;
+        }
+
+        /* =========================
+           Status
+           ========================= */
+
+        .status-container {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            min-width: 95px;
+
+            padding: 7px 10px;
+
+            border: 1px solid #e4dfe8;
+            border-radius: 8px;
+
+            background: #faf9fb;
+
+            color: #59535f;
+
+            cursor: pointer;
+
+            font-size: 13px;
+        }
+
+        .status-button::after {
+            content: "▼";
+
+            margin-left: auto;
+
+            font-size: 9px;
+            color: #99929f;
+        }
+
+        .status-button.waiting {
+            background: #f1ebf9;
+            border-color: #e1d5ef;
+            color: #775c9e;
+        }
+
+        .status-button.completed {
+            background: #eaf6ef;
+            border-color: #d5eadf;
+            color: #4d8968;
+        }
+
+        .status-button.cancelled {
+            background: #fbecee;
+            border-color: #efd8dc;
+            color: #ae626d;
+        }
+
+        /* =========================
+           Dropdown
+           ========================= */
+
+        .status-menu {
+            position: absolute;
+
+            top: calc(100% + 5px);
+            left: 0;
+
+            z-index: 100;
+
+            width: 120px;
+
+            padding: 5px;
+
+            border: 1px solid #e5e0e8;
+            border-radius: 9px;
+
+            background: white;
+
+            box-shadow:
+                0 8px 25px rgba(40, 30, 50, 0.10);
+
+            display: none;
+        }
+
+        .status-menu.open {
+            display: block;
+        }
+
+        .status-option {
+            width: 100%;
+
+            padding: 8px 10px;
+
+            border: none;
+            border-radius: 6px;
+
+            background: transparent;
+
+            text-align: left;
+
+            cursor: pointer;
+
+            font-size: 13px;
+        }
+
+        .status-option:hover {
+            background: #f5f2f7;
+        }
+
+        /* =========================
+           Update Button
+           ========================= */
+
+        .update-button {
+            padding: 7px 11px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #8d72b8;
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            display: none;
+        }
+
+        .update-button:hover {
+            background: #795ea5;
+        }
+
+        .update-button.visible {
+            display: inline-block;
+        }
+
+        .update-button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* =========================
+           Empty / Loading / Error
+           ========================= */
+
+        .message {
+            padding: 50px 20px;
+
+            text-align: center;
+
+            color: #99929f;
+
+            font-size: 14px;
+        }
+
+        .error {
+            color: #b55e69;
+        }
+
+        /* =========================
+           Mobile
+           ========================= */
+
+        @media (max-width: 600px) {
+            .container {
+                width: calc(100% - 20px);
+                margin: 20px auto;
+            }
+
+            .header {
+                align-items: flex-start;
+            }
+
+            .title h1 {
+                font-size: 19px;
+            }
+
+            .refresh-button {
+                padding: 8px 10px;
+            }
+
+            th,
+            td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- =========================
+         Header
+         ========================= -->
+
+    <header class="header">
+
+        <div class="title">
+
+            <div class="title-icon">
+                🎵
+            </div>
+
+            <div>
+                <h1>今日點歌</h1>
+
+                <div
+                    class="count"
+                    id="orderCount"
+                >
+                    載入中...
+                </div>
+            </div>
+
+        </div>
+
+        <button
+            class="refresh-button"
+            id="refreshButton"
+        >
+            ↻ 重新整理
+        </button>
+
+    </header>
+
+
+    <!-- =========================
+         Table
+         ========================= -->
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th class="index">
+                        序號
+                    </th>
+
+                    <th>
+                        歌手 - 歌名
+                    </th>
+
+                    <th>
+                        點歌人
+                    </th>
+
+                    <th>
+                        狀態
+                    </th>
+                </tr>
+
+            </thead>
+
+            <tbody id="orderList">
+
+                <tr>
+                    <td
+                        colspan="4"
+                        class="message"
+                    >
+                        載入中...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   API
+   ========================================================= */
+
+const API_URL =
+    "https://song-list.shiroshio0507.workers.dev/api/songlist";
+
+
+/* =========================================================
+   狀態設定
+   ========================================================= */
+
+const STATUS = {
+
+    waiting: {
+        label: "等待",
+        className: "waiting",
+        icon: "🟣"
+    },
+
+    completed: {
+        label: "完成",
+        className: "completed",
+        icon: "🟢"
+    },
+
+    cancelled: {
+        label: "取消",
+        className: "cancelled",
+        icon: "🔴"
+    }
+
+};
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const orderList =
+    document.getElementById("orderList");
+
+const orderCount =
+    document.getElementById("orderCount");
+
+const refreshButton =
+    document.getElementById("refreshButton");
+
+
+/* =========================================================
+   載入今日點歌
+   ========================================================= */
+
+async function loadOrders() {
+
+    orderList.innerHTML = `
+        <tr>
+            <td
+                colspan="4"
+                class="message"
+            >
+                載入中...
+            </td>
+        </tr>
+    `;
+
+    try {
+
+        const response =
+            await fetch(API_URL);
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                "API 回傳 success=false"
+            );
+
+        }
+
+
+        const orders =
+            Array.isArray(data.orders)
+                ? data.orders
+                : [];
+
+
+        renderOrders(orders);
+
+
+    } catch (error) {
+
+        console.error(
+            "取得點歌資料失敗:",
+            error
+        );
+
+        orderCount.textContent =
+            "載入失敗";
+
+        orderList.innerHTML = `
+            <tr>
+                <td
+                    colspan="4"
+                    class="message error"
+                >
+                    無法取得點歌資料
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   Render
+   ========================================================= */
+
+function renderOrders(orders) {
+
+    orderCount.textContent =
+        `${orders.length} 首`;
+
+
+    if (orders.length === 0) {
+
+        orderList.innerHTML = `
+            <tr>
+                <td
+                    colspan="4"
+                    class="message"
+                >
+                    今天還沒有點歌
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    /*
+     * API 本身已經 ORDER BY created_at ASC
+     * 這裡再排序一次，避免前端 API 改動後順序錯誤。
+     */
+
+    orders.sort(
+        (a, b) =>
+            new Date(a.created_at) -
+            new Date(b.created_at)
+    );
+
+
+    orderList.innerHTML =
+        orders
+            .map((order, index) =>
+                createOrderRow(
+                    order,
+                    index
+                )
+            )
+            .join("");
+
+
+    /*
+     * 綁定狀態按鈕
+     */
+
+    bindStatusEvents();
+
+}
+
+
+/* =========================================================
+   建立單筆資料
+   ========================================================= */
+
+function createOrderRow(order, index) {
+    const status = order.status;
+
+    return `
+        <tr data-id="${escapeHtml(order.id)}">
+
+            <td class="index">
+                #${index + 1}
+            </td>
+
+            <td class="song">
+                ${escapeHtml(order.artist)}
+                -
+                ${escapeHtml(order.song_name)}
+            </td>
+
+            <td class="user">
+                👤 ${escapeHtml(order.user_name || "anonymous")}
+            </td>
+
+            <td>
+                <div
+                    class="status-container"
+                    data-status="${escapeHtml(status)}"
+                >
+
+                    <button
+                        type="button"
+                        class="status-button ${STATUS[status].className}"
+                        data-action="toggle"
+                    >
+                        ${STATUS[status].icon}
+                        ${STATUS[status].label}
+                    </button>
+
+                    <div class="status-menu">
+                        ${Object.entries(STATUS)
+                            .map(([key, value]) => `
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-status="${key}"
+                                >
+                                    ${value.icon}
+                                    ${value.label}
+                                </button>
+                            `)
+                            .join("")}
+                    </div>
+
+                    <button
+                        type="button"
+                        class="update-button"
+                        data-action="update"
+                    >
+                        更新
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+    `;
+}
+
+/* =========================================================
+   狀態 UI 事件
+   ========================================================= */
+
+function bindStatusEvents() {
+
+    /*
+     * 開關下拉選單
+     */
+
+    document
+        .querySelectorAll(
+            '[data-action="toggle"]'
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    const container =
+                        button.closest(
+                            ".status-container"
+                        );
+
+                    closeAllMenus(
+                        container
+                    );
+
+                    container
+                        .querySelector(
+                            ".status-menu"
+                        )
+                        .classList.toggle(
+                            "open"
+                        );
+
+                }
+            );
+
+        });
+
+
+    /*
+     * 選擇狀態
+     */
+
+    document
+        .querySelectorAll(
+            ".status-option"
+        )
+        .forEach(option => {
+
+            option.addEventListener(
+                "click",
+                () => {
+
+                    const container =
+                        option.closest(
+                            ".status-container"
+                        );
+
+                    const newStatus =
+                        option.dataset.status;
+
+
+                    /*
+                     * 取得目前狀態
+                     */
+
+                    const oldStatus =
+                        container.dataset.status;
+
+
+                    /*
+                     * 如果沒有改變，
+                     * 不顯示更新按鈕。
+                     */
+
+                    if (
+                        newStatus === oldStatus
+                    ) {
+
+                        container
+                            .querySelector(
+                                ".status-menu"
+                            )
+                            .classList.remove(
+                                "open"
+                            );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * 暫存新狀態
+                     *
+                     * 注意：
+                     * 這裡還沒有 PATCH。
+                     */
+
+                    container.dataset.pendingStatus =
+                        newStatus;
+
+
+                    const button =
+                        container.querySelector(
+                            ".status-button"
+                        );
+
+
+                    button.className =
+                        `status-button ${STATUS[newStatus].className}`;
+
+                    button.innerHTML =
+                        `${STATUS[newStatus].icon}
+                         ${STATUS[newStatus].label}`;
+
+
+                    /*
+                     * 顯示更新按鈕
+                     */
+
+                    container
+                        .querySelector(
+                            ".update-button"
+                        )
+                        .classList.add(
+                            "visible"
+                        );
+
+
+                    container
+                        .querySelector(
+                            ".status-menu"
+                        )
+                        .classList.remove(
+                            "open"
+                        );
+
+                }
+            );
+
+        });
+
+
+    /*
+     * PATCH 更新
+     */
+
+    document
+        .querySelectorAll(
+            '[data-action="update"]'
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    updateOrderStatus(
+                        button
+                    );
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   更新狀態
+   ========================================================= */
+
+async function updateOrderStatus(
+    updateButton
+) {
+
+    const container =
+        updateButton.closest(
+            ".status-container"
+        );
+
+
+    const row =
+        updateButton.closest("tr");
+
+
+    /*
+     * D1 永久 ID
+     *
+     * 使用 data-id
+     */
+
+    const id =
+        row.dataset.id;
+
+
+    const newStatus =
+        container.dataset.pendingStatus;
+
+
+    if (!newStatus) {
+        return;
+    }
+
+
+    /*
+     * 防止重複點擊
+     */
+
+    updateButton.disabled = true;
+
+    updateButton.textContent =
+        "更新中...";
+
+
+    try {
+
+        /*
+         * 注意：
+         *
+         * 這裡假設你的 Worker
+         * PATCH endpoint 是：
+         *
+         * PATCH /api/order/:id
+         */
+
+        const response =
+            await fetch(
+                `https://song-list.shiroshio0507.workers.dev/api/order/${encodeURIComponent(id)}`,
+                {
+                    method: "PATCH",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+
+        }
+
+
+        /*
+         * 更新成功
+         */
+
+        container.dataset.status =
+            newStatus;
+
+
+        delete container.dataset.pendingStatus;
+
+
+        updateButton
+            .classList
+            .remove("visible");
+
+
+        updateButton.disabled =
+            false;
+
+        updateButton.textContent =
+            "更新";
+
+
+    } catch (error) {
+
+        console.error(
+            "更新狀態失敗:",
+            error
+        );
+
+
+        /*
+         * 更新失敗：
+         * 重新載入 API，
+         * 讓畫面恢復成伺服器實際狀態。
+         */
+
+        updateButton.disabled =
+            false;
+
+        updateButton.textContent =
+            "更新";
+
+
+        await loadOrders();
+
+        alert(
+            "更新狀態失敗，請稍後再試。"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   關閉所有下拉選單
+   ========================================================= */
+
+function closeAllMenus(
+    except = null
+) {
+
+    document
+        .querySelectorAll(
+            ".status-menu.open"
+        )
+        .forEach(menu => {
+
+            const container =
+                menu.closest(
+                    ".status-container"
+                );
+
+            if (
+                container !== except
+            ) {
+
+                menu.classList.remove(
+                    "open"
+                );
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   點擊其他地方 → 關閉選單
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    () => {
+
+        closeAllMenus();
+
+    }
+);
+
+
+/* =========================================================
+   重新整理
+   ========================================================= */
+
+refreshButton.addEventListener(
+    "click",
+    loadOrders
+);
+
+
+/* =========================================================
+   HTML Escape
+   防止 API 資料直接注入 HTML
+   ========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   初始化
+   ========================================================= */
+
+loadOrders();
+
+</script>
+
+</body>
+</html>
