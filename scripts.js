@@ -5,7 +5,39 @@ let songs = [];
 let filteredSongs = [];
 let displayCount = 20;
 const PAGE_SIZE = 20;
-SongUrl = 'https://song-list.shiroshio0507.workers.dev/api/songs'
+let orderCooldownUntil = 0;
+let orderCooldownTimer = null;
+let isOrdering = false;
+let toastTimer = null;
+const SongUrl = 'https://song-list.shiroshio0507.workers.dev/api/songs';
+const nameDialog = document.getElementById('name-dialog');
+const nameForm = document.getElementById('name-form');
+const userNameInput = document.getElementById('user-name');
+const currentUserName = document.getElementById('current-user-name');
+const editNameButton = document.getElementById('edit-name');
+let currentUser = localStorage.getItem('songlist-user') || '';
+
+function updateUserName() {
+    currentUserName.textContent = currentUser || '未設定';
+}
+
+function openNameDialog() {
+    userNameInput.value = currentUser;
+    nameDialog.showModal();
+    userNameInput.focus();
+}
+
+updateUserName();
+openNameDialog();
+
+editNameButton.addEventListener('click', openNameDialog);
+
+nameForm.addEventListener('submit', () => {
+    currentUser = userNameInput.value.trim();
+    localStorage.setItem('songlist-user', currentUser);
+    updateUserName();
+});
+
 async function loadSongs() {
     try {
         const res = await fetch(SongUrl);
@@ -71,26 +103,62 @@ rdsong.addEventListener('click', () => {
         }, 5000);
 })
 
-function copyText(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        console.log(`已複製：${text}`);
-    });
+function showOrderToast(message, isError = false) {
+        const toast = document.getElementById('order-toast');
+        toast.textContent = message;
+        toast.classList.toggle('error', isError);
+        toast.classList.add('visible');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('visible'), 2500);
 }
 
-async function ordersong(user='anonymous' ,artist ,songName) {
-    const res = await fetch('https://song-list.shiroshio0507.workers.dev/api/order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user: user,
-        artist: artist,
-        songName: songName
-      })
-    });
-    console.log("status =", res.status);
-    console.log("response =", await res.text());
+function updateOrderButtons() {
+        const isCoolingDown = orderCooldownUntil > Date.now();
+        document.querySelectorAll('.copy-btn').forEach(button => {
+                button.disabled = isOrdering || isCoolingDown;
+        });
+}
+
+function startOrderCooldown() {
+        orderCooldownUntil = Date.now() + 10000;
+        updateOrderButtons();
+        if (orderCooldownTimer) clearTimeout(orderCooldownTimer);
+        orderCooldownTimer = setTimeout(() => {
+                orderCooldownUntil = 0;
+                updateOrderButtons();
+        }, 10000);
+}
+
+async function ordersong(button, artist, songName) {
+        if (isOrdering || orderCooldownUntil > Date.now()) return;
+
+        isOrdering = true;
+        updateOrderButtons();
+        try {
+                const res = await fetch('https://song-list.shiroshio0507.workers.dev/api/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user: currentUser || 'anonymous',
+                        artist: artist,
+                        songName: songName
+                    })
+                });
+                const responseText = await res.text();
+                console.log("status =", res.status);
+                console.log("response =", responseText);
+                if (!res.ok) throw new Error(`點歌失敗：${res.status}`);
+                showOrderToast('已送出點歌');
+                startOrderCooldown();
+        } catch (err) {
+                console.error(err);
+                showOrderToast('點歌失敗，請稍後再試', true);
+        } finally {
+                isOrdering = false;
+                updateOrderButtons();
+        }
 }
 
 function renderList(append = false) {
@@ -121,11 +189,8 @@ function renderList(append = false) {
             <div class='img_p'></div>
             <div style="display:flex; justify-content:space-between; align-items:center; white-space: nowrap;">
                 <div class="song${iswarn}">🎵 ${song['曲名']}</div>
-                <button class="copy-btn" onclick="ordersong(undefined, '${song['歌手']}', '${song['曲名']}')">
-                    <img src="https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/main/img/B_copy.svg"
-                    class="icon"
-                    draggable="false"
-                    > 複製
+                <button class="copy-btn" onclick="ordersong(this, '${song['歌手']}', '${song['曲名']}')">
+                    <i class="fa-solid fa-paper-plane"></i> 點歌
                 </button>
             </div>
             <div class="meta">
@@ -143,6 +208,7 @@ function renderList(append = false) {
     });
 
     resultBox.appendChild(fragment);
+    updateOrderButtons();
     if (append) displayCount = end;
 }
 

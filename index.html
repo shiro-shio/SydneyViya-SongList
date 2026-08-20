@@ -9,8 +9,21 @@
 </head>
 
 <body>
+<dialog id="name-dialog" class="name-dialog">
+    <form id="name-form" method="dialog">
+        <h2>點歌提示</h2>
+        <p>輸入yt上的名字比較有優先權</p>
+        <label for="user-name">YouTube 名字</label>
+        <input id="user-name" name="user-name" type="text" maxlength="50" placeholder="請輸入名字（可留白）" autocomplete="nickname">
+        <button type="submit">確認</button>
+    </form>
+</dialog>
 <div class="card">
     <h1 style="user-select: none;">歌單搜尋~</h1>
+    <div class="current-user" aria-live="polite">
+        <span>名字：<strong id="current-user-name">未設定</strong></span>
+        <button id="edit-name" type="button">編輯</button>
+    </div>
     <div style="display: flex; align-items: center; justify-content: center;">
         <a href="https://forms.gle/q3caCSeAQQQg2ZLm7" class="icon-link" data-tooltip="許願清單" target="_blank" style="font-size: 20px;top: -20px;">
             <i class="fa-regular fa-file-lines fa-2xl" style="position: relative;margin-left: 0px;color: #b987ff;text-shadow: -1px -1px 1px #7e3bff;transform: translate(0px, 20px);"></i>
@@ -19,6 +32,7 @@
         <i id="rdsong" class="fa-solid fa-shuffle fa-2xl" style="right: 40px; position: relative; color: #882eff7a;"></i>
     </div>
     <div class="result" id="result"></div>
+    <div id="order-toast" class="order-toast" role="status" aria-live="polite"></div>
     <div class="tooltip-link">
         <a href="https://www.youtube.com/@Sydney_Viya_0525/featured" class="icon-link" data-tooltip="YouTube" target="_blank">
             <i class="fa-brands fa-square-youtube fa-2xs" style="color: #ff0000;"></i>
