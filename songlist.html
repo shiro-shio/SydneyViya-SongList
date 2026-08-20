@@ -176,7 +176,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: auto;
 
             /*min-width: 650px;*/
         }
@@ -251,12 +251,15 @@
 
         th:nth-child(2),
         td:nth-child(2) {
-            width: 50%;
+            white-space: nowrap;
+            text-align: left;
         }
 
         th:nth-child(3),
         td:nth-child(3) {
-            width: 17%;
+            width: 1%;
+            white-space: nowrap;
+            text-align: left;
         }
 
         th:nth-child(4),
@@ -266,7 +269,9 @@
 
         .song {
             font-weight: 600;
-            overflow-wrap: anywhere;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .song [data-action="copy-song"] {
@@ -290,6 +295,9 @@
 
         .user {
             color: #68616f;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* =========================
