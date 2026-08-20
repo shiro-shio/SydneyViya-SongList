@@ -12,6 +12,18 @@
             box-sizing: border-box;
         }
 
+        html,
+        body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
         body {
             margin: 0;
             min-height: 100dvh;
@@ -161,6 +173,8 @@
             min-height: 0;
             overflow-x: auto;
             overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
 
             background-color: rgba(255, 255, 255, 0.22);
             background-image: url("img/IMG_0537.png");
@@ -171,6 +185,11 @@
 
             border: 1px solid #e8e4eb;
             border-radius: 14px;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 0;
+            height: 0;
         }
 
         table {
@@ -637,6 +656,12 @@
 
             .table-wrapper {
                 overflow-x: hidden;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .table-wrapper::-webkit-scrollbar {
+                display: none;
             }
 
             table {
@@ -650,16 +675,23 @@
 
             th:nth-child(2),
             td:nth-child(2) {
-                width: 40%;
-                max-width: 40%;
+                width: 42%;
+                max-width: 42%;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
 
             th:nth-child(3),
             td:nth-child(3) {
-                width: 22%;
-                max-width: 22%;
+                width: 20%;
+                max-width: 20%;
+                padding-left: 4px;
+                padding-right: 4px;
+                text-align: left;
+                font-size: 15px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             th:nth-child(4),
@@ -671,6 +703,12 @@
             th,
             td {
                 padding: 7px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .cancel-button {
+                transform: translateX(-4px);
             }
         }
     </style>
@@ -1122,7 +1160,7 @@ function createOrderRow(order, index) {
             </td>
 
             <td class="user">
-                👤 ${escapeHtml(displayUser)}
+                ${escapeHtml(displayUser)}
             </td>
 
             <td>
