@@ -65,7 +65,7 @@ async function loadSongs() {
         });
 
         filteredSongs = songs;
-        renderList(false); 
+        renderList(false);
         
     } catch (err) {
         console.error("載入失敗:", err);
@@ -78,12 +78,11 @@ loadSongs();
 const input = document.getElementById('kw');
 const resultBox = document.getElementById('result');
 let rdsongTimeout = null;
-
 input.addEventListener('input', () => {
     if (rdsongTimeout) { clearTimeout(rdsongTimeout); }
     const kw = input.value.trim().toLowerCase();
     filteredSongs = songs.filter(song =>
-        SEARCH_FIELDS.some(field => 
+        SEARCH_FIELDS.some(field =>
             song[field]?.toLowerCase().includes(kw)
         )
     );
@@ -97,7 +96,7 @@ rdsong.addEventListener('click', () => {
     filteredSongs = songs.filter(song => song['曲名'].includes(rs));
     renderList(false);
     rdsongTimeout = setTimeout(() => {
-            filteredSongs = songs
+            filteredSongs = songs;
             renderList(false);
             rdsongTimeout = null;
         }, 5000);

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>今日點歌</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
 
     <style>
         * {
@@ -36,6 +37,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
             margin-bottom: 18px;
         }
 
@@ -70,155 +72,6 @@
             font-size: 13px;
         }
 
-        /* =========================
-           Header 操作區
-           ========================= */
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* =========================
-           篩選按鈕
-           ========================= */
-
-        .filter-wrapper {
-            position: relative;
-        }
-
-        .filter-button {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-
-            border: 1px solid #e3dfe7;
-            background: white;
-
-            padding: 9px 13px;
-            border-radius: 9px;
-
-            color: #625d68;
-            cursor: pointer;
-
-            transition: 0.15s;
-        }
-
-        .filter-button:hover {
-            background: #f8f7fa;
-        }
-
-        .filter-button.active {
-            background: #eee8f7;
-            border-color: #ddd1ec;
-            color: #775c9e;
-        }
-
-        .filter-badge {
-            display: none;
-
-            min-width: 18px;
-            height: 18px;
-
-            padding: 0 5px;
-
-            border-radius: 999px;
-
-            background: #8d72b8;
-            color: white;
-
-            font-size: 11px;
-
-            align-items: center;
-            justify-content: center;
-        }
-
-        .filter-badge.visible {
-            display: flex;
-        }
-
-        /* =========================
-           篩選選單
-           ========================= */
-
-        .filter-menu {
-            position: absolute;
-
-            top: calc(100% + 7px);
-            right: 0;
-
-            z-index: 200;
-
-            width: 190px;
-
-            padding: 8px;
-
-            border: 1px solid #e5e0e8;
-            border-radius: 11px;
-
-            background: white;
-
-            box-shadow:
-                0 10px 30px rgba(40, 30, 50, 0.12);
-
-            display: none;
-        }
-
-        .filter-menu.open {
-            display: block;
-        }
-
-        .filter-title {
-            padding: 6px 8px 8px;
-
-            color: #77717e;
-
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .filter-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            width: 100%;
-
-            padding: 9px 8px;
-
-            border-radius: 7px;
-
-            cursor: pointer;
-
-            color: #59535f;
-
-            font-size: 13px;
-        }
-
-        .filter-option:hover {
-            background: #f6f3f8;
-        }
-
-        .filter-option input {
-            width: 15px;
-            height: 15px;
-
-            margin: 0;
-
-            accent-color: #8d72b8;
-
-            cursor: pointer;
-        }
-
-        .filter-option-icon {
-            width: 18px;
-        }
-
-        /* =========================
-           重新整理
-           ========================= */
-
         .refresh-button {
             border: 1px solid #e3dfe7;
             background: white;
@@ -234,6 +87,65 @@
 
         .refresh-button:hover {
             background: #f8f7fa;
+        }
+
+        .filter-container {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .header .filter-container {
+            margin-bottom: 0;
+            margin-left: auto;
+        }
+
+        .filter-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 14px;
+            border: 1px solid #e3dfe7;
+            border-radius: 9px;
+            background: white;
+            color: #59535f;
+            cursor: pointer;
+        }
+
+        .filter-button:hover {
+            background: #f8f7fa;
+        }
+
+        .filter-menu {
+            position: absolute;
+            top: calc(100% + 5px);
+            bottom: auto;
+            left: 0;
+            z-index: 100;
+            display: none;
+            width: 150px;
+            padding: 6px;
+            border: 1px solid #e5e0e8;
+            border-radius: 9px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(40, 30, 50, 0.10);
+        }
+
+        .filter-menu.open {
+            display: block;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 6px;
+            color: #59535f;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .filter-option:hover {
+            background: #f5f2f7;
         }
 
         /* =========================
@@ -252,6 +164,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
+
+            /*min-width: 650px;*/
         }
 
         thead {
@@ -296,6 +210,24 @@
             font-weight: 600;
         }
 
+        .song [data-action="copy-song"] {
+            display: inline-block;
+            padding: 0 2px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .song [data-action="copy-song"]:hover {
+            background: rgba(255, 255, 255, 0.68);
+            box-shadow: 0 7px 15px rgba(90, 70, 120, 0.16);
+            backdrop-filter: blur(5px);
+            transform: translateY(-2px);
+        }
+
         .user {
             color: #68616f;
         }
@@ -310,6 +242,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            min-width: 230px;
         }
 
         .status-button {
@@ -361,13 +294,14 @@
         }
 
         /* =========================
-           Status Dropdown
+           Dropdown
            ========================= */
 
         .status-menu {
             position: absolute;
 
-            top: calc(100% + 5px);
+            top: auto;
+            bottom: calc(100% + 5px);
             left: 0;
 
             z-index: 100;
@@ -445,6 +379,29 @@
             cursor: not-allowed;
         }
 
+        .cancel-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            margin-left: auto;
+            border: 1px solid #efd8dc;
+            border-radius: 8px;
+            background: #fbecee;
+            color: #ae626d;
+            cursor: pointer;
+        }
+
+        .cancel-button:hover {
+            background: #f5dce0;
+        }
+
+        .cancel-button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
         /* =========================
            Empty / Loading / Error
            ========================= */
@@ -468,7 +425,6 @@
            ========================= */
 
         @media (max-width: 600px) {
-
             .container {
                 width: calc(100% - 20px);
                 margin: 20px auto;
@@ -482,14 +438,6 @@
                 font-size: 19px;
             }
 
-            .header-actions {
-                gap: 5px;
-            }
-
-            .filter-button {
-                padding: 8px 10px;
-            }
-
             .refresh-button {
                 padding: 8px 10px;
             }
@@ -497,10 +445,6 @@
             th,
             td {
                 padding: 7px;
-            }
-
-            .filter-menu {
-                right: 0;
             }
         }
     </style>
@@ -535,117 +479,41 @@
 
         </div>
 
-
-        <!-- =========================
-             Header 操作
-             ========================= -->
-
-        <div class="header-actions">
-
-            <!-- 篩選 -->
-
-            <div class="filter-wrapper">
-
-                <button
-                    type="button"
-                    class="filter-button"
-                    id="filterButton"
-                >
-                    ☰ 篩選
-
-                    <span
-                        class="filter-badge"
-                        id="filterBadge"
-                    >
-                        0
-                    </span>
-                </button>
-
-
-                <div
-                    class="filter-menu"
-                    id="filterMenu"
-                >
-
-                    <div class="filter-title">
-                        篩選
-                    </div>
-
-
-                    <label class="filter-option">
-
-                        <input
-                            type="checkbox"
-                            value="queued"
-                            data-filter-status
-                        >
-
-                        <span class="filter-option-icon">
-                            🟣
-                        </span>
-
-                        <span>
-                            排隊
-                        </span>
-
-                    </label>
-
-
-                    <label class="filter-option">
-
-                        <input
-                            type="checkbox"
-                            value="completed"
-                            data-filter-status
-                        >
-
-                        <span class="filter-option-icon">
-                            🟢
-                        </span>
-
-                        <span>
-                            完成
-                        </span>
-
-                    </label>
-
-
-                    <label class="filter-option">
-
-                        <input
-                            type="checkbox"
-                            value="cancelled"
-                            data-filter-status
-                        >
-
-                        <span class="filter-option-icon">
-                            🔴
-                        </span>
-
-                        <span>
-                            取消
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-
-            <!-- 重新整理 -->
-
+        <div class="filter-container">
             <button
-                class="refresh-button"
-                id="refreshButton"
+                type="button"
+                class="filter-button"
+                id="filterButton"
+                aria-expanded="false"
             >
-                ↻ 重新整理
+                <i class="fa-solid fa-filter"></i>
+                篩選
             </button>
 
+            <div class="filter-menu" id="filterMenu">
+                <label class="filter-option">
+                    <input type="checkbox" data-hidden-status="queued">
+                    隱藏排隊中
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" data-hidden-status="completed">
+                    隱藏完成
+                </label>
+                <label class="filter-option">
+                    <input type="checkbox" data-hidden-status="cancelled">
+                    隱藏取消
+                </label>
+            </div>
         </div>
 
-    </header>
+        <button
+            class="refresh-button"
+            id="refreshButton"
+        >
+            ↻ 重新整理
+        </button>
 
+    </header>
 
     <!-- =========================
          Table
@@ -658,7 +526,6 @@
             <thead>
 
                 <tr>
-
                     <th class="index">
                         序號
                     </th>
@@ -674,23 +541,19 @@
                     <th>
                         狀態
                     </th>
-
                 </tr>
 
             </thead>
 
-
             <tbody id="orderList">
 
                 <tr>
-
                     <td
                         colspan="4"
                         class="message"
                     >
                         載入中...
                     </td>
-
                 </tr>
 
             </tbody>
@@ -712,10 +575,6 @@ const API_URL =
     "https://song-list.shiroshio0507.workers.dev/api/songlist";
 
 
-const PATCH_API_URL =
-    "https://song-list.shiroshio0507.workers.dev/api/order";
-
-
 /* =========================================================
    狀態設定
    ========================================================= */
@@ -723,7 +582,7 @@ const PATCH_API_URL =
 const STATUS = {
 
     queued: {
-        label: "排隊",
+        label: "排隊中",
         className: "queued",
         icon: "🟣"
     },
@@ -762,56 +621,71 @@ const filterButton =
 const filterMenu =
     document.getElementById("filterMenu");
 
-const filterBadge =
-    document.getElementById("filterBadge");
+const filterCheckboxes =
+    filterMenu.querySelectorAll("input[data-hidden-status]");
 
-
-/* =========================================================
-   資料
-   ========================================================= */
-
-/*
- * API 取得的完整資料。
- *
- * 篩選不會修改這份資料，
- * 這樣重新整理或切換篩選時可以直接重新 Render。
- */
+const HIDDEN_STATUS_STORAGE_KEY =
+    "songlist-hidden-statuses";
 
 let allOrders = [];
+let hiddenStatuses = new Set();
 
+try {
+    const savedStatuses = JSON.parse(
+        localStorage.getItem(HIDDEN_STATUS_STORAGE_KEY) || "[]"
+    );
 
-/*
- * 使用 Set 保存目前被排除的 status。
- *
- * 例如：
- *
- * Set {
- *     "completed",
- *     "cancelled"
- * }
- *
- * 代表：
- * 排除完成 + 排除取消
- */
+    hiddenStatuses = new Set(
+        savedStatuses.filter(status => STATUS[status])
+    );
+} catch (error) {
+    console.warn("讀取篩選條件失敗:", error);
+}
 
-const excludedStatuses = new Set();
+filterCheckboxes.forEach(checkbox => {
+    checkbox.checked = hiddenStatuses.has(
+        checkbox.dataset.hiddenStatus
+    );
 
+    checkbox.addEventListener("change", () => {
+        const status = checkbox.dataset.hiddenStatus;
 
-/* =========================================================
-   自動刷新
-   ========================================================= */
+        if (checkbox.checked) {
+            hiddenStatuses.add(status);
+        } else {
+            hiddenStatuses.delete(status);
+        }
 
-const AUTO_REFRESH_INTERVAL =
-    60 * 1000; // 1 分鐘
+        saveHiddenStatuses();
+        renderOrders(allOrders);
+    });
+});
 
-let refreshTimer = null;
+function saveHiddenStatuses() {
+    localStorage.setItem(
+        HIDDEN_STATUS_STORAGE_KEY,
+        JSON.stringify([...hiddenStatuses])
+    );
+}
 
-let isLoading = false;
+filterButton.addEventListener("click", event => {
+    event.stopPropagation();
+    filterMenu.classList.toggle("open");
+    filterButton.setAttribute(
+        "aria-expanded",
+        filterMenu.classList.contains("open")
+    );
+});
 
 
 /* =========================================================
    載入今日點歌
    ========================================================= */
+
+const AUTO_REFRESH_INTERVAL = 60 * 1000; // 1 分鐘
+
+let refreshTimer = null;
+let isLoading = false;
 
 async function loadOrders() {
 
@@ -822,59 +696,27 @@ async function loadOrders() {
 
     isLoading = true;
 
-
     try {
 
-        const response =
-            await fetch(API_URL);
-
+        const response = await fetch(API_URL);
 
         if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
+            throw new Error(`HTTP ${response.status}`);
         }
 
-
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         if (!data.success) {
-
-            throw new Error(
-                "API 回傳 success=false"
-            );
-
+            throw new Error("API 回傳 success=false");
         }
 
-
-        allOrders =
+        const orders =
             Array.isArray(data.orders)
                 ? data.orders
                 : [];
 
-
-        /*
-         * API 已經依 created_at ASC，
-         * 這裡再保險排序一次。
-         */
-
-        allOrders.sort(
-            (a, b) =>
-                new Date(a.created_at) -
-                new Date(b.created_at)
-        );
-
-
-        /*
-         * 使用目前篩選條件重新顯示。
-         */
-
-        renderOrders();
-
+        allOrders = orders;
+        renderOrders(allOrders);
 
     } catch (error) {
 
@@ -883,9 +725,10 @@ async function loadOrders() {
             error
         );
 
-
         /*
-         * 自動刷新失敗時不要清除目前畫面。
+         * 注意：
+         * 自動刷新失敗時不要清掉目前畫面。
+         * 保留使用者目前看到的資料。
          */
 
     } finally {
@@ -893,117 +736,57 @@ async function loadOrders() {
         isLoading = false;
 
         scheduleAutoRefresh();
-
     }
-
 }
-
-
-/* =========================================================
-   自動刷新計時器
-   ========================================================= */
 
 function scheduleAutoRefresh() {
 
+    // 清除上一個計時器
     if (refreshTimer) {
-
-        clearTimeout(
-            refreshTimer
-        );
-
+        clearTimeout(refreshTimer);
     }
 
+    refreshTimer = setTimeout(() => {
 
-    refreshTimer =
-        setTimeout(
-            () => {
+        loadOrders();
 
-                loadOrders();
-
-            },
-            AUTO_REFRESH_INTERVAL
-        );
-
+    }, AUTO_REFRESH_INTERVAL);
 }
-
-
-/* =========================================================
-   套用篩選
-   ========================================================= */
-
-function getFilteredOrders() {
-
-    return allOrders.filter(
-        order => {
-
-            const status =
-                String(
-                    order.status || ""
-                ).trim();
-
-
-            /*
-             * 如果 status 在 excludedStatuses
-             * 裡面，就排除。
-             */
-
-            return !excludedStatuses.has(
-                status
-            );
-
-        }
-    );
-
-}
-
 
 /* =========================================================
    Render
    ========================================================= */
 
-function renderOrders() {
+function renderOrders(orders) {
 
-    const orders =
-        getFilteredOrders();
+    orders.sort(
+        (a, b) =>
+            new Date(a.created_at) -
+            new Date(b.created_at)
+    );
 
-
-    /*
-     * 顯示篩選後的數量。
-     */
+    const visibleOrders = orders.filter(order =>
+        !hiddenStatuses.has(order.status)
+    );
 
     orderCount.textContent =
-        `${orders.length} 首`;
+        hiddenStatuses.size === 0
+            ? `${orders.length} 首`
+            : `${visibleOrders.length} / ${orders.length} 首`;
 
 
-    /* =========================
-       沒有資料
-       ========================= */
-
-    if (orders.length === 0) {
-
-        /*
-         * 區分：
-         *
-         * 1. 今天完全沒有點歌
-         * 2. 有點歌，但被篩選掉
-         */
-
-        const message =
-            allOrders.length === 0
-                ? "今天還沒有點歌"
-                : "沒有符合篩選條件的點歌";
-
+    if (visibleOrders.length === 0) {
 
         orderList.innerHTML = `
             <tr>
-
                 <td
                     colspan="4"
                     class="message"
                 >
-                    ${message}
+                    ${orders.length === 0
+                        ? "今天還沒有點歌"
+                        : "沒有符合篩選的點歌"}
                 </td>
-
             </tr>
         `;
 
@@ -1011,21 +794,20 @@ function renderOrders() {
     }
 
 
-    /* =========================
-       Render
-       ========================= */
-
     orderList.innerHTML =
-        orders
-            .map(
-                (order, index) =>
-                    createOrderRow(
-                        order,
-                        index
-                    )
+        visibleOrders
+            .map((order, index) =>
+                createOrderRow(
+                    order,
+                    index
+                )
             )
             .join("");
 
+
+    /*
+     * 綁定狀態按鈕
+     */
 
     bindStatusEvents();
 
@@ -1036,40 +818,17 @@ function renderOrders() {
    建立單筆資料
    ========================================================= */
 
-function createOrderRow(
-    order,
-    index
-) {
-
-    /*
-     * anonymous → 顯示「匿名」
-     *
-     * 但 data-user 必須保留原本的
-     * anonymous，PATCH 才能通過 Worker 驗證。
-     */
-
+function createOrderRow(order, index) {
     const displayUser =
         order.user_name === "anonymous"
             ? "匿名"
-            : (
-                order.user_name ||
-                "匿名"
-            );
-
+            : (order.user_name || "匿名");
 
     const status =
-        String(
-            order.status || ""
-        ).trim();
-
+        String(order.status || "").trim();
 
     const statusInfo =
         STATUS[status];
-
-
-    /*
-     * 防止未知 status 讓整個列表崩潰。
-     */
 
     if (!statusInfo) {
 
@@ -1080,12 +839,10 @@ function createOrderRow(
         );
 
         return "";
-
     }
 
 
     return `
-
         <tr
             data-id="${escapeHtml(order.id)}"
             data-song-name="${escapeHtml(order.song_name)}"
@@ -1096,22 +853,21 @@ function createOrderRow(
                 #${index + 1}
             </td>
 
-
             <td class="song">
-
+                <span
+                    data-action="copy-song"
+                    data-song-name="${escapeHtml(order.song_name)}"
+                    title="點擊複製歌名"
+                >
                 ${escapeHtml(order.artist)}
                 -
                 ${escapeHtml(order.song_name)}
-
+                </span>
             </td>
-
 
             <td class="user">
-
                 👤 ${escapeHtml(displayUser)}
-
             </td>
-
 
             <td>
 
@@ -1125,32 +881,25 @@ function createOrderRow(
                         class="status-button ${statusInfo.className}"
                         data-action="toggle"
                     >
-
                         ${statusInfo.icon}
                         ${statusInfo.label}
-
                     </button>
 
 
                     <div class="status-menu">
 
                         ${Object.entries(STATUS)
-                            .map(
-                                ([key, value]) => `
-
-                                    <button
-                                        type="button"
-                                        class="status-option"
-                                        data-status="${key}"
-                                    >
-
-                                        ${value.icon}
-                                        ${value.label}
-
-                                    </button>
-
-                                `
-                            )
+                            .filter(([key]) => key !== "cancelled")
+                            .map(([key, value]) => `
+                                <button
+                                    type="button"
+                                    class="status-option"
+                                    data-status="${key}"
+                                >
+                                    ${value.icon}
+                                    ${value.label}
+                                </button>
+                            `)
                             .join("")}
 
                     </div>
@@ -1164,14 +913,23 @@ function createOrderRow(
                         更新
                     </button>
 
+                    <button
+                        type="button"
+                        class="cancel-button"
+                        data-action="cancel"
+                        aria-label="取消點歌"
+                        title="取消點歌"
+                        ${status === "cancelled" ? "disabled" : ""}
+                    >
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+
                 </div>
 
             </td>
 
         </tr>
-
     `;
-
 }
 
 
@@ -1181,48 +939,71 @@ function createOrderRow(
 
 function bindStatusEvents() {
 
+    document
+        .querySelectorAll(
+            '[data-action="copy-song"]'
+        )
+        .forEach(song => {
+
+            song.addEventListener(
+                "click",
+                async event => {
+
+                    event.stopPropagation();
+
+                    try {
+                        await navigator.clipboard.writeText(
+                            song.dataset.songName
+                        );
+                    } catch (error) {
+                        console.error(
+                            "複製歌名失敗:",
+                            error
+                        );
+                    }
+
+                }
+            );
+
+        });
+
     /*
-     * 開關狀態下拉選單
+     * 開關下拉選單
      */
 
     document
         .querySelectorAll(
             '[data-action="toggle"]'
         )
-        .forEach(
-            button => {
+        .forEach(button => {
 
-                button.addEventListener(
-                    "click",
-                    event => {
+            button.addEventListener(
+                "click",
+                event => {
 
-                        event.stopPropagation();
+                    event.stopPropagation();
 
-
-                        const container =
-                            button.closest(
-                                ".status-container"
-                            );
-
-
-                        closeAllMenus(
-                            container
+                    const container =
+                        button.closest(
+                            ".status-container"
                         );
 
-
+                    closeAllMenus(
                         container
-                            .querySelector(
-                                ".status-menu"
-                            )
-                            .classList.toggle(
-                                "open"
-                            );
+                    );
 
-                    }
-                );
+                    container
+                        .querySelector(
+                            ".status-menu"
+                        )
+                        .classList.toggle(
+                            "open"
+                        );
 
-            }
-        );
+                }
+            );
+
+        });
 
 
     /*
@@ -1233,103 +1014,112 @@ function bindStatusEvents() {
         .querySelectorAll(
             ".status-option"
         )
-        .forEach(
-            option => {
+        .forEach(option => {
 
-                option.addEventListener(
-                    "click",
-                    () => {
+            option.addEventListener(
+                "click",
+                () => {
 
-                        const container =
-                            option.closest(
-                                ".status-container"
-                            );
+                    const container =
+                        option.closest(
+                            ".status-container"
+                        );
 
-
-                        const newStatus =
-                            option.dataset.status;
+                    const newStatus =
+                        option.dataset.status;
 
 
-                        const oldStatus =
-                            container.dataset.status;
+                    /*
+                     * 取得目前狀態
+                     */
+
+                    const oldStatus =
+                        container.dataset.status;
 
 
-                        /*
-                         * 沒有改變狀態
-                         */
+                    /*
 
-                        if (
-                            newStatus ===
-                            oldStatus
-                        ) {
+                        const statusButton = container.querySelector(
+                            ".status-button"
+                        );
 
-                            container
-                                .querySelector(
-                                    ".status-menu"
-                                )
-                                .classList
-                                .remove(
-                                    "open"
-                                );
-
-                            return;
-
-                        }
-
-
-                        /*
-                         * 暫存新狀態。
-                         *
-                         * 此時還沒有 PATCH。
-                         */
-
-                        container.dataset.pendingStatus =
-                            newStatus;
-
-
-                        const button =
-                            container.querySelector(
-                                ".status-button"
-                            );
-
-
-                        button.className =
+                        statusButton.className =
                             `status-button ${STATUS[newStatus].className}`;
 
-
-                        button.innerHTML =
+                        statusButton.innerHTML =
                             `${STATUS[newStatus].icon}
                              ${STATUS[newStatus].label}`;
+                     * 如果沒有改變，
+                     * 不顯示更新按鈕。
+                     */
 
-
-                        /*
-                         * 顯示更新按鈕
-                         */
-
-                        container
-                            .querySelector(
-                                ".update-button"
-                            )
-                            .classList
-                            .add(
-                                "visible"
-                            );
-
+                    if (
+                        newStatus === oldStatus
+                    ) {
 
                         container
                             .querySelector(
                                 ".status-menu"
                             )
-                            .classList
-                            .remove(
+                            .classList.remove(
                                 "open"
                             );
 
-                    }
-                );
+                        return;
 
-            }
-        );
+                    }
+
+
+                    /*
+                     * 暫存新狀態
+                     *
+                     * 注意：
+                     * 這裡還沒有 PATCH。
+                     */
+
+                    container.dataset.pendingStatus =
+                        newStatus;
+
+
+                    const button =
+                        container.querySelector(
+                            ".status-button"
+                        );
+
+
+                    button.className =
+                        `status-button ${STATUS[newStatus].className}`;
+
+                    button.innerHTML =
+                        `${STATUS[newStatus].icon}
+                         ${STATUS[newStatus].label}`;
+
+
+                    /*
+                     * 顯示更新按鈕
+                     */
+
+                    container
+                        .querySelector(
+                            ".update-button"
+                        )
+                        .classList.add(
+                            "visible"
+                        );
+
+
+                    container
+                        .querySelector(
+                            ".status-menu"
+                        )
+                        .classList.remove(
+                            "open"
+                        );
+
+                }
+            );
+
+        });
 
 
     /*
@@ -1340,22 +1130,40 @@ function bindStatusEvents() {
         .querySelectorAll(
             '[data-action="update"]'
         )
-        .forEach(
-            button => {
+        .forEach(button => {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                        updateOrderStatus(
-                            button
-                        );
+                    updateOrderStatus(
+                        button
+                    );
 
-                    }
-                );
+                }
+            );
 
-            }
-        );
+        });
+
+    document
+        .querySelectorAll(
+            '[data-action="cancel"]'
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    updateOrderStatus(
+                        button,
+                        "cancelled"
+                    );
+
+                }
+            );
+
+        });
 
 }
 
@@ -1364,40 +1172,30 @@ function bindStatusEvents() {
    更新狀態
    ========================================================= */
 
-async function updateOrderStatus(
-    updateButton
-) {
+async function updateOrderStatus(updateButton, forcedStatus = null) {
 
     const container =
-        updateButton.closest(
-            ".status-container"
-        );
-
+        updateButton.closest(".status-container");
 
     const row =
         updateButton.closest("tr");
 
+    // ==========================================
+    // 從目前這一列取得資料
+    // ==========================================
 
     const id =
         row.dataset.id;
 
-
     const newStatus =
-        container.dataset.pendingStatus;
+        forcedStatus || container.dataset.pendingStatus;
 
-
-    /*
-     * Worker 需要：
-     *
-     * 1. status
-     * 2. songName
-     * 3. user
-     */
-
+    // 歌手 - 歌名那一欄
+    // 注意：Worker 只需要 song_name
     const songName =
         row.dataset.songName;
 
-
+    // 點歌人
     const user =
         row.dataset.user;
 
@@ -1407,49 +1205,48 @@ async function updateOrderStatus(
     }
 
 
-    updateButton.disabled = true;
+    // ==========================================
+    // 防止重複點擊
+    // ==========================================
 
-    updateButton.textContent =
-        "更新中...";
+    updateButton.disabled = true;
+    if (updateButton.dataset.action === "update") {
+        updateButton.textContent = "更新中...";
+    }
 
 
     try {
 
-        const response =
-            await fetch(
-                `${PATCH_API_URL}/${encodeURIComponent(id)}`,
-                {
-                    method: "PATCH",
+        const response = await fetch(
+            `https://song-list.shiroshio0507.workers.dev/api/order/${encodeURIComponent(id)}`,
+            {
+                method: "PATCH",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-                    body: JSON.stringify({
+                body: JSON.stringify({
+                    status: newStatus,
 
-                        status:
-                            newStatus,
+                    // 必須與 D1 完全一致
+                    songName: songName,
 
-                        songName:
-                            songName,
-
-                        user:
-                            user
-
-                    })
-                }
-            );
+                    // 必須與 D1 完全一致
+                    user: user
+                })
+            }
+        );
 
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
 
-        if (
-            !response.ok ||
-            !data.success
-        ) {
+        // ==========================================
+        // Worker 回傳錯誤
+        // ==========================================
+
+        if (!response.ok || !data.success) {
 
             throw new Error(
                 data.message ||
@@ -1459,66 +1256,39 @@ async function updateOrderStatus(
         }
 
 
-        /*
-         * 更新成功。
-         */
+        // ==========================================
+        // 更新成功
+        // ==========================================
 
         container.dataset.status =
             newStatus;
 
-
         delete container.dataset.pendingStatus;
 
 
-        updateButton
+        const pendingUpdateButton = container.querySelector(
+            '[data-action="update"]'
+        );
+
+        pendingUpdateButton
             .classList
-            .remove(
-                "visible"
-            );
+            .remove("visible");
 
-
-        updateButton.disabled =
-            false;
-
-
-        updateButton.textContent =
-            "更新";
-
-
-        /*
-         * 同步本地資料。
-         *
-         * 這樣不用重新 GET API，
-         * 畫面上的篩選也會維持。
-         */
-
-        const targetOrder =
-            allOrders.find(
-                order =>
-                    String(order.id) ===
-                    String(id)
-            );
-
-
-        if (targetOrder) {
-
-            targetOrder.status =
-                newStatus;
-
+        updateButton.disabled = false;
+        if (updateButton.dataset.action === "update") {
+            updateButton.textContent = "更新";
         }
 
-
-        /*
-         * 如果剛剛修改成被排除的狀態，
-         * 立即從畫面移除。
-         */
-
-        renderOrders();
+        if (newStatus === "cancelled") {
+            container.querySelector('[data-action="cancel"]').disabled = true;
+        }
 
 
         console.log(
             `訂單 #${id} 狀態更新成功`
         );
+
+        await loadOrders();
 
 
     } catch (error) {
@@ -1529,16 +1299,14 @@ async function updateOrderStatus(
         );
 
 
-        updateButton.disabled =
-            false;
-
-
-        updateButton.textContent =
-            "更新";
+        updateButton.disabled = false;
+        updateButton.textContent = "更新";
 
 
         /*
-         * 重新取得伺服器資料。
+         * 重新抓 API
+         *
+         * 讓畫面恢復成 D1 真正的狀態。
          */
 
         await loadOrders();
@@ -1547,193 +1315,39 @@ async function updateOrderStatus(
         alert(
             `狀態更新失敗\n${error.message}`
         );
-
     }
-
 }
 
-
 /* =========================================================
-   篩選 UI
-   ========================================================= */
-
-/*
- * 開關篩選選單
- */
-
-filterButton.addEventListener(
-    "click",
-    event => {
-
-        event.stopPropagation();
-
-
-        closeAllMenus();
-
-
-        filterMenu
-            .classList
-            .toggle(
-                "open"
-            );
-
-    }
-);
-
-
-/*
- * 篩選 checkbox
- */
-
-document
-    .querySelectorAll(
-        "[data-filter-status]"
-    )
-    .forEach(
-        checkbox => {
-
-            checkbox.addEventListener(
-                "change",
-                () => {
-
-                    const status =
-                        checkbox.value;
-
-
-                    if (
-                        checkbox.checked
-                    ) {
-
-                        excludedStatuses.add(
-                            status
-                        );
-
-                    } else {
-
-                        excludedStatuses.delete(
-                            status
-                        );
-
-                    }
-
-
-                    updateFilterUI();
-
-                    renderOrders();
-
-                }
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   更新篩選 UI
-   ========================================================= */
-
-function updateFilterUI() {
-
-    const count =
-        excludedStatuses.size;
-
-
-    /*
-     * 顯示 / 隱藏數字 Badge
-     */
-
-    if (count > 0) {
-
-        filterBadge.textContent =
-            count;
-
-        filterBadge
-            .classList
-            .add(
-                "visible"
-            );
-
-        filterButton
-            .classList
-            .add(
-                "active"
-            );
-
-    } else {
-
-        filterBadge
-            .classList
-            .remove(
-                "visible"
-            );
-
-        filterButton
-            .classList
-            .remove(
-                "active"
-            );
-
-    }
-
-}
-
-
-/* =========================================================
-   關閉所有選單
+   關閉所有下拉選單
    ========================================================= */
 
 function closeAllMenus(
     except = null
 ) {
 
-    /*
-     * 關閉狀態選單
-     */
-
     document
         .querySelectorAll(
             ".status-menu.open"
         )
-        .forEach(
-            menu => {
+        .forEach(menu => {
 
-                const container =
-                    menu.closest(
-                        ".status-container"
-                    );
+            const container =
+                menu.closest(
+                    ".status-container"
+                );
 
+            if (
+                container !== except
+            ) {
 
-                if (
-                    container !== except
-                ) {
-
-                    menu
-                        .classList
-                        .remove(
-                            "open"
-                        );
-
-                }
+                menu.classList.remove(
+                    "open"
+                );
 
             }
-        );
 
-
-    /*
-     * 關閉篩選選單
-     */
-
-    if (
-        except !== filterMenu
-    ) {
-
-        filterMenu
-            .classList
-            .remove(
-                "open"
-            );
-
-    }
+        });
 
 }
 
@@ -1747,6 +1361,8 @@ document.addEventListener(
     () => {
 
         closeAllMenus();
+        filterMenu.classList.remove("open");
+        filterButton.setAttribute("aria-expanded", "false");
 
     }
 );
@@ -1759,40 +1375,24 @@ document.addEventListener(
 refreshButton.addEventListener(
     "click",
     async () => {
-
         await loadOrders();
-
     }
 );
 
 
 /* =========================================================
    HTML Escape
+   防止 API 資料直接注入 HTML
    ========================================================= */
 
 function escapeHtml(value) {
 
     return String(value ?? "")
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
 }
 
