@@ -14,6 +14,7 @@
 
         body {
             margin: 0;
+            min-height: 100dvh;
             background: #f5f5f7;
             color: #29262f;
             font-family:
@@ -26,7 +27,10 @@
 
         .container {
             width: min(1000px, calc(100% - 32px));
+            min-height: calc(100dvh - 80px);
             margin: 40px auto;
+            display: flex;
+            flex-direction: column;
         }
 
         /* =========================
@@ -153,9 +157,17 @@
            ========================= */
 
         .table-wrapper {
+            flex: 1;
+            min-height: 0;
             overflow-x: auto;
+            overflow-y: auto;
 
-            background: white;
+            background-color: rgba(255, 255, 255, 0.22);
+            background-image: url("img/IMG_0537.png");
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: local;
 
             border: 1px solid #e8e4eb;
             border-radius: 14px;
@@ -164,6 +176,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
 
             /*min-width: 650px;*/
         }
@@ -193,21 +206,62 @@
             border-bottom: none;
         }
 
+        tbody td {
+            background: rgba(255, 255, 255, 0.58);
+            backdrop-filter: blur(4px);
+        }
+
         tbody tr:hover {
-            background: #fcfbfd;
+            background: rgba(255, 255, 255, 0.68);
+        }
+
+        tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.68);
+        }
+
+        tbody tr:first-child td:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        tbody tr:first-child td:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
         }
 
         /* 欄位 */
 
         .index {
-            width: 30px;
+            width: 7%;
 
             color: #aaa4af;
             font-weight: 600;
         }
 
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 50%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 17%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 26%;
+        }
+
         .song {
             font-weight: 600;
+            overflow-wrap: anywhere;
         }
 
         .song [data-action="copy-song"] {
@@ -222,9 +276,10 @@
         }
 
         .song [data-action="copy-song"]:hover {
-            background: rgba(255, 255, 255, 0.68);
-            box-shadow: 0 7px 15px rgba(90, 70, 120, 0.16);
-            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(141, 114, 184, 0.35);
+            box-shadow: 0 4px 10px rgba(90, 70, 120, 0.1);
+            backdrop-filter: blur(2px);
             transform: translateY(-2px);
         }
 
@@ -242,7 +297,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            min-width: 230px;
+            width: 100%;
+            min-width: 0;
         }
 
         .status-button {
@@ -250,7 +306,8 @@
             align-items: center;
             gap: 7px;
 
-            min-width: 95px;
+            flex: 1 1 auto;
+            min-width: 0;
 
             padding: 7px 10px;
 
@@ -264,6 +321,8 @@
             cursor: pointer;
 
             font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .status-button::after {
@@ -385,7 +444,8 @@
             justify-content: center;
             width: 34px;
             height: 34px;
-            margin-left: auto;
+            flex: 0 0 34px;
+            margin-left: 0;
             border: 1px solid #efd8dc;
             border-radius: 8px;
             background: #fbecee;
@@ -427,6 +487,7 @@
         @media (max-width: 600px) {
             .container {
                 width: calc(100% - 20px);
+                min-height: calc(100dvh - 40px);
                 margin: 20px auto;
             }
 
