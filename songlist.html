@@ -270,12 +270,10 @@
         .song {
             font-weight: 600;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .song [data-action="copy-song"] {
-            display: inline-block;
+            display: block;
             padding: 0 2px;
             border: 1px solid transparent;
             border-radius: 8px;
@@ -291,6 +289,24 @@
             box-shadow: 0 4px 10px rgba(90, 70, 120, 0.1);
             backdrop-filter: blur(2px);
             transform: translateY(-2px);
+        }
+
+        .song-title,
+        .song-artist {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .song-title {
+            font-weight: 600;
+        }
+
+        .song-artist {
+            color: #77717e;
+            font-size: 12px;
+            font-weight: 400;
         }
 
         .user {
@@ -621,6 +637,35 @@
 
             .table-wrapper {
                 overflow-x: hidden;
+            }
+
+            table {
+                table-layout: fixed;
+            }
+
+            th:nth-child(1),
+            td:nth-child(1) {
+                width: 12%;
+            }
+
+            th:nth-child(2),
+            td:nth-child(2) {
+                width: 40%;
+                max-width: 40%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                width: 22%;
+                max-width: 22%;
+            }
+
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 26%;
+                max-width: 26%;
             }
 
             th,
@@ -1067,9 +1112,12 @@ function createOrderRow(order, index) {
                     data-song-name="${escapeHtml(order.song_name)}"
                     title="點擊複製歌名"
                 >
-                ${escapeHtml(order.artist)}
-                -
-                ${escapeHtml(order.song_name)}
+                    <span class="song-title">
+                        ${escapeHtml(order.song_name)}
+                    </span>
+                    <span class="song-artist">
+                        ${escapeHtml(order.artist)}
+                    </span>
                 </span>
             </td>
 
