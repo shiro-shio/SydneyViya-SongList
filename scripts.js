@@ -10,6 +10,8 @@ let orderCooldownTimer = null;
 let isOrdering = false;
 let toastTimer = null;
 const SongUrl = 'https://song-list.shiroshio0507.workers.dev/api/songs';
+const SongStatsUrl = 'https://song-list.shiroshio0507.workers.dev/api/song-stats'; 
+let songStats = new Map();
 const nameDialog = document.getElementById('name-dialog');
 const nameForm = document.getElementById('name-form');
 const userNameInput = document.getElementById('user-name');
@@ -40,33 +42,62 @@ nameForm.addEventListener('submit', () => {
 
 async function loadSongs() {
     try {
-        const res = await fetch(SongUrl);
-        const csvText = await res.text();
+        const [songRes, statsRes] = await Promise.all([
+            fetch(SongUrl),
+            fetch(SongStatsUrl)
+        ]);
+
+        if (!songRes.ok) {
+            throw new Error(`歌單 API 錯誤：${songRes.status}`);
+        }
+
+        if (!statsRes.ok) {
+            throw new Error(`點歌統計 API 錯誤：${statsRes.status}`);
+        }
+
+        const csvText = await songRes.text();
+        const statsData = await statsRes.json();
+        songStats = new Map(
+            statsData.data.map(item => [
+                `${item.artist}|||${item.song_name}`,
+                item
+            ])
+        );
         const regex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
-        const rows = csvText.split(/\r?\n/).filter(line => line.trim() !== "").map(line => {
-            const row = [];
-            const matches = line.matchAll(regex);
-            
-            for (const match of matches) {
-                let value = (match[1] !== undefined) 
-                    ? match[1].replace(/""/g, '"') 
-                    : match[2];
-                
-                row.push(value !== undefined ? value.trim() : "");
-            }
-            return row;
-        });
+
+        const rows = csvText
+            .split(/\r?\n/)
+            .filter(line => line.trim() !== "")
+            .map(line => {
+                const row = [];
+                const matches = line.matchAll(regex);
+
+                for (const match of matches) {
+                    let value = (match[1] !== undefined)
+                        ? match[1].replace(/""/g, '"')
+                        : match[2];
+
+                    row.push(value !== undefined ? value.trim() : "");
+                }
+
+                return row;
+            });
+
         songs = rows.slice(2).map(r => {
             const obj = {};
+
             HEADERS.forEach((h, i) => {
-                obj[h] = r[i] !== undefined ? String(r[i]).trim() : '';
+                obj[h] = r[i] !== undefined
+                    ? String(r[i]).trim()
+                    : '';
             });
+
             return obj;
         });
 
         filteredSongs = songs;
         renderList(false);
-        
+
     } catch (err) {
         console.error("載入失敗:", err);
     }
@@ -172,6 +203,11 @@ function renderList(append = false) {
     const slice = filteredSongs.slice(start, end);
 
     slice.forEach(song => {
+        const statsKey = `${song['歌手']}|||${song['曲名']}`;
+        const stats = songStats.get(statsKey);
+        const lastOrderDate = stats?.last_ordered_at
+            ? stats.last_ordered_at.slice(0, 10)
+            : '';
         const div = document.createElement('div');
         div.className = 'item';
         
@@ -196,6 +232,11 @@ function renderList(append = false) {
                 <img src="https://raw.githubusercontent.com/shiro-shio/SydneyViya-SongList/main/img/B_karaoke.svg"
                 class="icon"
                 draggable="false"> ${song['歌手']}
+                ${stats ? `<span class="order-stats">
+                            | ${lastOrderDate}
+                            ・${stats.order_count} 次
+                        </span>`
+                        : ''}
             </div>
             <div class="meta">
                 <span class="tag">熟練：${song['熟練']}</span>
