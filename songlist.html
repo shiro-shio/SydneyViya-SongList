@@ -191,6 +191,7 @@
         .table-wrapper {
             flex: 1;
             min-height: 0;
+            position: relative;
             overflow-x: auto;
             overflow-y: auto;
             scrollbar-width: none;
@@ -210,6 +211,10 @@
         .table-wrapper::-webkit-scrollbar {
             width: 0;
             height: 0;
+        }
+
+        .table-wrapper.lyrics-mode tbody > tr:not(.lyrics-row) {
+            display: none;
         }
 
         table {
@@ -235,7 +240,7 @@
         td {
             padding: 6px 3px;
 
-            text-align: left;
+            text-align: center;
 
             border-bottom: 1px solid #eeeaf0;
 
@@ -268,6 +273,11 @@
 
         tbody tr:hover td {
             background: rgba(255, 255, 255, 0.68);
+        }
+
+        tbody tr.lyrics-row:hover,
+        tbody tr.lyrics-row:hover td {
+            background: transparent;
         }
 
         tbody tr:first-child td:first-child {
@@ -318,6 +328,35 @@
             overflow: hidden;
         }
 
+        .song-content {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .lyrics-toggle {
+            flex: 0 0 24px;
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: #8d72b8;
+            cursor: pointer;
+        }
+
+        .lyrics-toggle:hover,
+        .lyrics-toggle[aria-expanded="true"] {
+            background: #eee8f7;
+        }
+
+        .song-copy {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
         .song [data-action="copy-song"] {
             display: block;
             padding: 0 2px;
@@ -353,6 +392,316 @@
             color: #77717e;
             font-size: 12px;
             font-weight: 400;
+        }
+
+        .lyrics-row[hidden] {
+            display: none;
+        }
+
+        .lyrics-row {
+            position: absolute;
+            z-index: 1000;
+            display: block;
+        }
+
+        .lyrics-row td {
+            display: block;
+            width: 100%;
+            padding: 0 0 8px;
+            background: transparent;
+        }
+
+        .lyrics-panel {
+            position: relative;
+            container-type: inline-size;
+            max-height: 100%;
+            padding: 38px 10px 9px;
+            border: 1px solid #e5e0e8;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.56);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+            box-shadow: 0 10px 28px rgba(40, 30, 50, 0.2);
+            transform-origin: center center;
+            animation: lyricsFlipIn 0.42s cubic-bezier(0.22, 0.72, 0.24, 1);
+        }
+
+        .lyrics-panel.maximized {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 28px;
+            grid-template-rows: auto minmax(0, 1fr) auto;
+            column-gap: 10px;
+            padding-right: 3px;
+            left: -7px;
+        }
+
+        .lyrics-panel.maximized .lyrics-lines {
+            grid-column: 1;
+            grid-row: 2;
+            flex: 1 1 auto;
+            height: auto;
+            max-height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            overflow-x: hidden;
+        }
+
+        @keyframes lyricsFlipIn {
+            from {
+                opacity: 0;
+                transform: perspective(900px) rotateY(-88deg) scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: perspective(900px) rotateY(0) scale(1);
+            }
+        }
+
+        .lyrics-back {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border: 1px solid #e3dfe7;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #625d68;
+            cursor: pointer;
+        }
+
+        .lyrics-back:hover {
+            background: #eee8f7;
+        }
+
+        .lyrics-panel::before,
+        .lyrics-panel::after {
+            position: absolute;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: 18px;
+            content: "";
+            pointer-events: none;
+        }
+
+        .lyrics-panel::before {
+            top: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.72), transparent);
+        }
+
+        .lyrics-panel::after {
+            bottom: 0;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.72));
+        }
+
+        .lyrics-lines {
+            height: 7.5em;
+            padding: 22px 0;
+            overflow-y: auto;
+            scrollbar-width: none;
+            position: relative;
+            z-index: 0;
+        }
+
+        .lyrics-lines::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .lyrics-line {
+            height: var(--lyrics-line-height, 1.8em);
+            overflow: hidden;
+            color: #77717e;
+            font-size: 14px;
+            line-height: var(--lyrics-line-height, 1.8em);
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .lyrics-spacer {
+            height: var(--lyrics-line-height, 1.8em);
+            pointer-events: none;
+        }
+
+        .lyrics-line.active {
+            color: #775c9e;
+            font-size: 1.25em;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .lyrics-message {
+            color: #99929f;
+            font-size: 13px;
+            line-height: 7.5em;
+            text-align: center;
+        }
+
+        .lyrics-controls {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
+            margin-top: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .lyrics-panel.maximized .lyrics-controls {
+            position: absolute;
+            top: -30px;
+            right: 32px;
+            left: 48px;
+            width: auto;
+            margin-top: 0;
+        }
+
+        .lyrics-play,
+        .lyrics-offset {
+            border: 1px solid #e3dfe7;
+            border-radius: 7px;
+            background: #faf9fb;
+            color: #59535f;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .lyrics-play {
+            width: 32px;
+            height: 30px;
+        }
+
+        .lyrics-search {
+            width: 32px;
+            height: 30px;
+        }
+
+        .lyrics-offset {
+            flex: 1 1 0;
+            width: 0;
+            min-width: 0;
+            accent-color: #8d72b8;
+        }
+
+        .lyrics-timeline {
+            grid-column: 2;
+            grid-row: 1 / 4;
+            width: 16px;
+            height: 100%;
+            min-height: 80px;
+            margin: 0;
+            justify-self: end;
+            position: relative;
+            z-index: 2;
+            accent-color: #8d72b8;
+            writing-mode: vertical-lr;
+            direction: ltr;
+        }
+
+        .lyrics-time {
+            width: auto;
+            min-width: 58px;
+            margin-left: 2px;
+            color: #77717e;
+            font-size: 10px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        @container (max-width: 420px) {
+            .lyrics-line {
+                font-size: 12px;
+            }
+        }
+
+        @container (min-width: 600px) {
+            .lyrics-line {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .lyrics-panel.maximized .lyrics-lines {
+                position: relative;
+                left: 0;
+                width: 100%;
+            }
+        }
+
+        .lyrics-offset-label {
+            min-width: 48px;
+            flex: 0 0 48px;
+            color: #77717e;
+            font-size: 10px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .lyrics-search-results {
+            display: grid;
+            align-content: start;
+            grid-auto-rows: max-content;
+            gap: 6px;
+            height: 100%;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .lyrics-search-results::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .lyrics-search-result {
+            width: 100%;
+            overflow: hidden;
+            padding: 7px 9px;
+            border: 1px solid #e3dfe7;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.62);
+            color: #59535f;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .lyrics-search-result:hover {
+            background: #eee8f7;
+        }
+
+        .lyrics-panel.maximized .lyrics-offset {
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        .lyrics-panel.maximized .lyrics-offset-label {
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        .lyrics-offset-controls {
+            grid-column: 1;
+            grid-row: 3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            margin-top: 7px;
         }
 
         .user {
@@ -667,6 +1016,11 @@
                 white-space: nowrap;
             }
 
+            .lyrics-row td {
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+
             .status-option::before {
                 font-size: 13px;
             }
@@ -703,7 +1057,7 @@
 
             th:nth-child(1),
             td:nth-child(1) {
-                width: 12%;
+                width: 6%;
             }
 
             th:nth-child(2),
@@ -875,6 +1229,12 @@
 const API_URL =
     "https://song-list.shiroshio0507.workers.dev/api/songlist";
 
+const LRCLIB_API_URL =
+    "https://lrclib.net/api/get";
+
+const LRCLIB_SEARCH_API_URL =
+    "https://lrclib.net/api/search";
+
 
 /* =========================================================
    狀態設定
@@ -1040,7 +1400,10 @@ async function loadOrders() {
                 : [];
 
         allOrders = orders;
-        renderOrders(allOrders);
+
+        if (!document.querySelector(".table-wrapper.lyrics-mode")) {
+            renderOrders(allOrders);
+        }
 
     } catch (error) {
 
@@ -1167,9 +1530,90 @@ function createOrderRow(order, index) {
 
 
     return `
+        <tr class="lyrics-row" hidden>
+            <td colspan="4">
+                <div class="lyrics-panel" data-lyrics-panel>
+                    <button
+                        type="button"
+                        class="lyrics-back"
+                        data-action="lyrics-back"
+                        aria-label="返回點歌單"
+                        title="返回點歌單"
+                    >
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+
+                    <div class="lyrics-lines" data-lyrics-lines>
+                        <div class="lyrics-message">點擊左側音符載入歌詞</div>
+                    </div>
+
+                    <div class="lyrics-controls">
+                        <button
+                            type="button"
+                            class="lyrics-play"
+                            data-action="lyrics-play"
+                            aria-label="播放"
+                            title="播放"
+                            disabled
+                        >
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+
+                        <span class="lyrics-time" data-lyrics-time>
+                            0:00 / 0:00
+                        </span>
+
+                        <button
+                            type="button"
+                            class="lyrics-search"
+                            data-action="lyrics-search"
+                            aria-label="搜尋其他歌詞"
+                            title="搜尋其他歌詞"
+                        >
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+
+                    <div class="lyrics-offset-controls">
+                        <input
+                            class="lyrics-offset"
+                            data-action="lyrics-offset"
+                            type="range"
+                            min="-5"
+                            max="5"
+                            step="0.1"
+                            value="0"
+                            aria-label="時間軸偏移"
+                            title="時間軸偏移"
+                            disabled
+                        >
+
+                        <span class="lyrics-offset-label" data-lyrics-offset-label>
+                            偏移 0.0s
+                        </span>
+                    </div>
+
+                    <input
+                        class="lyrics-timeline"
+                        data-action="lyrics-timeline"
+                        type="range"
+                        min="0"
+                        max="0"
+                        step="0.1"
+                        value="0"
+                        aria-label="歌詞時間軸"
+                        title="歌詞時間軸"
+                        disabled
+                    >
+
+                </div>
+            </td>
+        </tr>
+
         <tr
             data-id="${escapeHtml(order.id)}"
             data-song-name="${escapeHtml(order.song_name)}"
+            data-artist="${escapeHtml(order.artist)}"
             data-user="${escapeHtml(order.user_name || "")}"
         >
 
@@ -1178,18 +1622,32 @@ function createOrderRow(order, index) {
             </td>
 
             <td class="song">
-                <span
-                    data-action="copy-song"
-                    data-song-name="${escapeHtml(order.song_name)}"
-                    title="點擊複製歌名"
-                >
-                    <span class="song-title">
-                        ${escapeHtml(order.song_name)}
+                <div class="song-content">
+                    <button
+                        type="button"
+                        class="lyrics-toggle"
+                        data-action="lyrics-toggle"
+                        aria-expanded="false"
+                        aria-label="展開歌詞"
+                        title="展開歌詞"
+                    >
+                        <i class="fa-solid fa-music"></i>
+                    </button>
+
+                    <span
+                        class="song-copy"
+                        data-action="copy-song"
+                        data-song-name="${escapeHtml(order.song_name)}"
+                        title="點擊複製歌名"
+                    >
+                        <span class="song-title">
+                            ${escapeHtml(order.song_name)}
+                        </span>
+                        <span class="song-artist">
+                            ${escapeHtml(order.artist)}
+                        </span>
                     </span>
-                    <span class="song-artist">
-                        ${escapeHtml(order.artist)}
-                    </span>
-                </span>
+                </div>
             </td>
 
             <td class="user">
@@ -1256,6 +1714,7 @@ function createOrderRow(order, index) {
             </td>
 
         </tr>
+
     `;
 }
 
@@ -1264,7 +1723,438 @@ function createOrderRow(order, index) {
    狀態 UI 事件
    ========================================================= */
 
+const lyricsStates = new WeakMap();
+
+function parseSyncedLyrics(lyrics) {
+    const lines = [];
+    const linePattern = /\[(\d+):(\d{2})(?:[.:](\d{1,3}))?\]\s*(.*)/g;
+    let match;
+
+    while ((match = linePattern.exec(lyrics)) !== null) {
+        const fraction = match[3] || "0";
+        const milliseconds = fraction.length === 1
+            ? Number(fraction) * 100
+            : fraction.length === 2
+                ? Number(fraction) * 10
+                : Number(fraction);
+
+        const text = match[4]
+            .replace(/\[\d+:\d{2}(?:[.:]\d{1,3})?\]/g, "")
+            .trim();
+
+        if (!text) {
+            continue;
+        }
+
+        lines.push({
+            time: Number(match[1]) * 60 + Number(match[2]) + milliseconds / 1000,
+            text
+        });
+    }
+
+    return lines.sort((a, b) => a.time - b.time);
+}
+
+function findActiveLyricIndex(lines, currentTime) {
+    let activeIndex = -1;
+
+    lines.forEach((line, index) => {
+        if (line.time <= currentTime) {
+            activeIndex = index;
+        }
+    });
+
+    return activeIndex;
+}
+
+function renderLyrics(panel, state) {
+    const linesElement = panel.querySelector("[data-lyrics-lines]");
+    const offsetLabel = panel.querySelector("[data-lyrics-offset-label]");
+    const timeline = panel.querySelector("[data-action=\"lyrics-timeline\"]");
+    const timeLabel = panel.querySelector("[data-lyrics-time]");
+    const activeIndex = findActiveLyricIndex(state.lines, state.currentTime + state.offset);
+    const lineStyles = getComputedStyle(linesElement);
+    const lineHeight = parseFloat(lineStyles.lineHeight) || 25;
+    linesElement.style.setProperty("--lyrics-line-height", `${lineHeight}px`);
+    const verticalPadding =
+        parseFloat(lineStyles.paddingTop) +
+        parseFloat(lineStyles.paddingBottom);
+    const visibleCount = Math.max(
+        1,
+        Math.floor((linesElement.clientHeight - verticalPadding) / lineHeight)
+    );
+    const effectiveActiveIndex = activeIndex < 0 ? 0 : activeIndex;
+    const centerIndex = Math.floor(visibleCount / 2);
+    const firstIndex = Math.max(
+        0,
+        effectiveActiveIndex - centerIndex
+    );
+    const topSpacerCount = Math.max(
+        0,
+        centerIndex - effectiveActiveIndex + firstIndex
+    );
+    const lineCapacity = Math.max(1, visibleCount - topSpacerCount);
+    const visibleLines = state.lines.slice(
+        firstIndex,
+        firstIndex + lineCapacity
+    );
+    const activeVisibleIndex = effectiveActiveIndex - firstIndex;
+    const bottomSpacerCount = Math.max(
+        0,
+        visibleCount - topSpacerCount - visibleLines.length
+    );
+
+    linesElement.innerHTML = [
+        ...Array.from({ length: topSpacerCount }, () => '<div class="lyrics-spacer"></div>'),
+        ...visibleLines.map((line, index) => `
+            <div class="lyrics-line ${firstIndex + index === effectiveActiveIndex ? "active" : ""}">
+                ${escapeHtml(line.text || " ")}
+            </div>
+        `),
+        ...Array.from({ length: bottomSpacerCount }, () => '<div class="lyrics-spacer"></div>')
+    ].join("");
+
+    offsetLabel.textContent = `偏移 ${state.offset >= 0 ? "+" : ""}${state.offset.toFixed(1)}s`;
+    timeline.value = String(state.currentTime);
+    timeLabel.textContent = `${formatLyricsTime(state.currentTime)} / ${formatLyricsTime(state.duration)}`;
+}
+
+function formatLyricsTime(seconds) {
+    const safeSeconds = Math.max(0, Number(seconds) || 0);
+    const minutes = Math.floor(safeSeconds / 60);
+    const remainingSeconds = Math.floor(safeSeconds % 60);
+
+    return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
+function setLyricsMessage(panel, message) {
+    panel.querySelector("[data-lyrics-lines]").innerHTML =
+        `<div class="lyrics-message">${escapeHtml(message)}</div>`;
+}
+
+function updateLyricsPlayback(panel, state) {
+    if (!state.playing) {
+        return;
+    }
+
+    state.currentTime = (Date.now() - state.startedAt) / 1000;
+    if (state.currentTime >= state.duration) {
+        state.currentTime = state.duration;
+        pauseLyricsPlayback(panel, state);
+    }
+    renderLyrics(panel, state);
+}
+
+function startLyricsPlayback(panel, state) {
+    state.playing = true;
+    state.startedAt = Date.now() - state.currentTime * 1000;
+    state.timer = setInterval(
+        () => updateLyricsPlayback(panel, state),
+        100
+    );
+    panel.querySelector("[data-action=\"lyrics-play\"]").innerHTML =
+        '<i class="fa-solid fa-pause"></i>';
+    panel.querySelector("[data-action=\"lyrics-play\"]").setAttribute("aria-label", "暫停");
+}
+
+function pauseLyricsPlayback(panel, state) {
+    state.playing = false;
+    clearInterval(state.timer);
+    state.timer = null;
+    panel.querySelector("[data-action=\"lyrics-play\"]").innerHTML =
+        '<i class="fa-solid fa-play"></i>';
+    panel.querySelector("[data-action=\"lyrics-play\"]").setAttribute("aria-label", "播放");
+}
+
+function applyLyricsData(panel, state, data) {
+    state.duration = Number(data.duration) || 0;
+    state.lines = parseSyncedLyrics(data.syncedLyrics || "");
+
+    if (state.lines.length === 0 && data.plainLyrics) {
+        state.lines = data.plainLyrics
+            .split(/\r?\n/)
+            .map(text => ({ time: 0, text: text.trim() }))
+            .filter(line => line.text);
+    }
+
+    if (state.lines.length === 0) {
+        throw new Error(data.instrumental ? "這首歌是純音樂" : "沒有可顯示的歌詞");
+    }
+
+    state.currentTime = 0;
+    state.loaded = true;
+    panel.querySelector("[data-action=\"lyrics-play\"]").disabled = false;
+    panel.querySelector("[data-action=\"lyrics-offset\"]").disabled = false;
+    const timeline = panel.querySelector("[data-action=\"lyrics-timeline\"]");
+    timeline.max = String(Math.max(state.duration, state.lines.at(-1)?.time || 0));
+    timeline.disabled = false;
+    renderLyrics(panel, state);
+}
+
+function renderLyricsSearchResults(panel, results) {
+    const linesElement = panel.querySelector("[data-lyrics-lines]");
+    linesElement.innerHTML = `
+        <div class="lyrics-search-results">
+            ${results.map((result, index) => `
+                <button
+                    type="button"
+                    class="lyrics-search-result"
+                    data-search-index="${index}"
+                    title="${escapeHtml(result.artistName || "未知歌手")} - ${escapeHtml(result.trackName || result.name || "未知歌名") }"
+                >
+                    ${escapeHtml(result.artistName || "未知歌手")} - ${escapeHtml(result.trackName || result.name || "未知歌名")}
+                </button>
+            `).join("")}
+        </div>
+    `;
+
+    linesElement
+        .querySelectorAll("[data-search-index]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                const state = lyricsStates.get(panel);
+                const result = results[Number(button.dataset.searchIndex)];
+
+                try {
+                    applyLyricsData(panel, state, result);
+                } catch (error) {
+                    setLyricsMessage(panel, error.message);
+                }
+            });
+        });
+}
+
+async function searchLyrics(row, panel) {
+    setLyricsMessage(panel, "搜尋其他歌詞...");
+
+    try {
+        const query = new URLSearchParams({
+            q: row.dataset.artist,
+            track_name: row.dataset.songName
+        });
+        const response = await fetch(`${LRCLIB_SEARCH_API_URL}?${query}`, {
+            headers: {
+                "Accept": "application/json",
+                "X-User-Agent": "SongList (local HTML client)"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const results = await response.json();
+        if (!Array.isArray(results) || results.length === 0) {
+            throw new Error("找不到其他歌詞");
+        }
+
+        renderLyricsSearchResults(panel, results);
+    } catch (error) {
+        setLyricsMessage(panel, error.message || "搜尋歌詞失敗");
+    }
+}
+
+async function loadLyrics(row, panel) {
+    const state = {
+        lines: [],
+        currentTime: 0,
+        offset: 0,
+        duration: 0,
+        playing: false,
+        timer: null,
+        loaded: false
+    };
+
+    lyricsStates.set(panel, state);
+    setLyricsMessage(panel, "歌詞載入中...");
+
+    try {
+        const query = new URLSearchParams({
+            artist_name: row.dataset.artist,
+            track_name: row.dataset.songName
+        });
+        const response = await fetch(`${LRCLIB_API_URL}?${query}`, {
+            headers: {
+                "Accept": "application/json",
+                "X-User-Agent": "SongList (local HTML client)"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(response.status === 404 ? "找不到歌詞" : `HTTP ${response.status}`);
+        }
+
+        applyLyricsData(panel, state, await response.json());
+    } catch (error) {
+        setLyricsMessage(panel, error.message || "歌詞載入失敗");
+    }
+}
+
+function positionLyricsOverlay(songRow, lyricsRow) {
+    const wrapper = songRow.closest(".table-wrapper");
+    const overlayWidth = wrapper.clientWidth - 16;
+    const overlayHeight = wrapper.clientHeight - 16;
+    const cell = lyricsRow.querySelector("td");
+    const panel = lyricsRow.querySelector("[data-lyrics-panel]");
+    const left = wrapper.scrollLeft + 8;
+    const top = wrapper.scrollTop + 8;
+
+    wrapper.classList.add("lyrics-mode");
+    lyricsRow.style.left = `${left}px`;
+    lyricsRow.style.top = `${top}px`;
+    lyricsRow.style.width = `${overlayWidth}px`;
+    panel.classList.add("maximized");
+    panel.style.height = `${overlayHeight}px`;
+    cell.style.width = `${overlayWidth}px`;
+    panel.style.width = `${overlayWidth}px`;
+}
+
+function closeLyricsOverlay(lyricsRow, panel) {
+    lyricsRow.hidden = true;
+    lyricsRow.style.left = "";
+    lyricsRow.style.top = "";
+    lyricsRow.style.width = "";
+    lyricsRow.querySelector("td").style.width = "";
+    panel.style.width = "";
+
+    const songRow = lyricsRow.nextElementSibling;
+    songRow.hidden = false;
+    lyricsRow.closest(".table-wrapper").classList.remove("lyrics-mode");
+    panel.classList.remove("maximized");
+    panel.style.height = "";
+    songRow
+        .querySelector('[data-action="lyrics-toggle"]')
+        .setAttribute("aria-expanded", "false");
+
+    const state = lyricsStates.get(panel);
+    if (state) {
+        pauseLyricsPlayback(panel, state);
+    }
+
+    renderOrders(allOrders);
+}
+
+function repositionOpenLyricsOverlay() {
+    const lyricsRow = document.querySelector(".lyrics-row:not([hidden])");
+
+    if (!lyricsRow) {
+        return;
+    }
+
+    const songRow = lyricsRow.nextElementSibling;
+    positionLyricsOverlay(songRow, lyricsRow);
+}
+
+window.addEventListener("resize", repositionOpenLyricsOverlay);
+
 function bindStatusEvents() {
+
+    document
+        .querySelectorAll('[data-action="lyrics-toggle"]')
+        .forEach(button => {
+            button.addEventListener("click", async event => {
+                event.stopPropagation();
+
+                const row = button.closest("tr");
+                const lyricsRow = row.previousElementSibling;
+                const panel = lyricsRow.querySelector("[data-lyrics-panel]");
+                const isOpen = !lyricsRow.hidden;
+
+                if (isOpen) {
+                    closeLyricsOverlay(lyricsRow, panel);
+                    return;
+                }
+
+                lyricsRow.hidden = false;
+                button.setAttribute("aria-expanded", String(!isOpen));
+
+                positionLyricsOverlay(row, lyricsRow);
+                row.hidden = true;
+
+                if (!lyricsStates.has(panel)) {
+                    await loadLyrics(row, panel);
+                }
+            });
+        });
+
+    document
+        .querySelectorAll('[data-action="lyrics-back"]')
+        .forEach(button => {
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                const panel = button.closest("[data-lyrics-panel]");
+                closeLyricsOverlay(panel.closest(".lyrics-row"), panel);
+            });
+        });
+
+    document
+        .querySelectorAll('[data-action="lyrics-play"]')
+        .forEach(button => {
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                const panel = button.closest("[data-lyrics-panel]");
+                const state = lyricsStates.get(panel);
+
+                if (!state || !state.loaded) {
+                    return;
+                }
+
+                if (state.playing) {
+                    pauseLyricsPlayback(panel, state);
+                } else {
+                    startLyricsPlayback(panel, state);
+                }
+            });
+        });
+
+    document
+        .querySelectorAll('[data-action="lyrics-search"]')
+        .forEach(button => {
+            button.addEventListener("click", event => {
+                event.stopPropagation();
+
+                const panel = button.closest("[data-lyrics-panel]");
+                const row = panel.closest(".lyrics-row").nextElementSibling;
+                searchLyrics(row, panel);
+            });
+        });
+
+    document
+        .querySelectorAll('[data-action="lyrics-offset"]')
+        .forEach(input => {
+            input.addEventListener("input", event => {
+                const panel = input.closest("[data-lyrics-panel]");
+                const state = lyricsStates.get(panel);
+
+                if (!state) {
+                    return;
+                }
+
+                state.offset = Number(event.target.value);
+                renderLyrics(panel, state);
+            });
+        });
+
+    document
+        .querySelectorAll('[data-action="lyrics-timeline"]')
+        .forEach(input => {
+            input.addEventListener("input", event => {
+                const panel = input.closest("[data-lyrics-panel]");
+                const state = lyricsStates.get(panel);
+
+                if (!state) {
+                    return;
+                }
+
+                state.currentTime = Number(event.target.value);
+                if (state.playing) {
+                    state.startedAt = Date.now() - state.currentTime * 1000;
+                }
+                renderLyrics(panel, state);
+            });
+        });
 
     document
         .querySelectorAll(
