@@ -433,7 +433,7 @@
             grid-template-rows: auto minmax(0, 1fr) auto;
             column-gap: 10px;
             padding-right: 3px;
-            left: -7px;
+            left: 0px;
         }
 
         .lyrics-panel.maximized .lyrics-lines {
@@ -1996,7 +1996,7 @@ function positionLyricsOverlay(songRow, lyricsRow) {
     const overlayHeight = wrapper.clientHeight - 16;
     const cell = lyricsRow.querySelector("td");
     const panel = lyricsRow.querySelector("[data-lyrics-panel]");
-    const left = wrapper.scrollLeft + 8;
+    const left = wrapper.scrollLeft;
     const top = wrapper.scrollTop + 8;
 
     wrapper.classList.add("lyrics-mode");
