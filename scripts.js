@@ -150,13 +150,13 @@ function updateOrderButtons() {
 }
 
 function startOrderCooldown() {
-        orderCooldownUntil = Date.now() + 10000;
+        orderCooldownUntil = Date.now() + 60000;
         updateOrderButtons();
         if (orderCooldownTimer) clearTimeout(orderCooldownTimer);
         orderCooldownTimer = setTimeout(() => {
                 orderCooldownUntil = 0;
                 updateOrderButtons();
-        }, 10000);
+        }, 60000);
 }
 
 async function ordersong(button, artist, songName) {
@@ -306,6 +306,9 @@ window.addEventListener('mousemove', (e) => {
 
 
 
-
+console.warn(
+    '%c如果您看到這段訊息，請不要有任何惡意操作。\n這是方便點歌簡單設計的歌單，請尊重原作者和主播。',
+    'font-size: 16px; font-weight: bold;'
+);
 
 
