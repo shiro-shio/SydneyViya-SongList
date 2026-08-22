@@ -587,6 +587,18 @@
             height: 30px;
         }
 
+        .lyrics-search-input {
+            flex: 1 1 auto;
+            min-width: 0;
+            height: 30px;
+            padding: 0 8px;
+            border: 1px solid #e3dfe7;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #59535f;
+            font-size: 12px;
+        }
+
         .lyrics-offset {
             flex: 1 1 0;
             width: 0;
@@ -1550,6 +1562,23 @@ function createOrderRow(order, index) {
                     <div class="lyrics-controls">
                         <button
                             type="button"
+                            class="lyrics-search"
+                            data-action="lyrics-search"
+                            aria-label="搜尋其他歌詞"
+                            title="搜尋其他歌詞"
+                        >
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                        <input
+                            class="lyrics-search-input"
+                            data-action="lyrics-search-input"
+                            type="text"
+                            value="${escapeHtml(order.artist)}"
+                            aria-label="歌詞搜尋歌手"
+                            title="輸入歌手"
+                        >
+                        <button
+                            type="button"
                             class="lyrics-play"
                             data-action="lyrics-play"
                             aria-label="播放"
@@ -1562,16 +1591,6 @@ function createOrderRow(order, index) {
                         <span class="lyrics-time" data-lyrics-time>
                             0:00 / 0:00
                         </span>
-
-                        <button
-                            type="button"
-                            class="lyrics-search"
-                            data-action="lyrics-search"
-                            aria-label="搜尋其他歌詞"
-                            title="搜尋其他歌詞"
-                        >
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
                     </div>
 
                     <div class="lyrics-offset-controls">
