@@ -64,7 +64,6 @@ async function loadSongs() {
             ])
         );
         const regex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
-
         const rows = csvText
             .split(/\r?\n/)
             .filter(line => line.trim() !== "")
@@ -79,7 +78,6 @@ async function loadSongs() {
 
                     row.push(value !== undefined ? value.trim() : "");
                 }
-
                 return row;
             });
 
@@ -91,7 +89,6 @@ async function loadSongs() {
                     ? String(r[i]).trim()
                     : '';
             });
-
             return obj;
         });
 
@@ -165,7 +162,9 @@ async function ordersong(button, artist, songName) {
         isOrdering = true;
         updateOrderButtons();
         try {
-                const res = await fetch('https://song-list.shiroshio0507.workers.dev/api/order', {
+            const res = await fetch(
+                'https://song-list.shiroshio0507.workers.dev/api/order',
+                {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -175,19 +174,52 @@ async function ordersong(button, artist, songName) {
                         artist: artist,
                         songName: songName
                     })
-                });
-                const responseText = await res.text();
-                console.log("status =", res.status);
-                console.log("response =", responseText);
-                if (!res.ok) throw new Error(`點歌失敗：${res.status}`);
-                showOrderToast('已送出點歌');
-                startOrderCooldown();
+                }
+            );
+
+            const data = await res.json();
+
+            console.log('status =', res.status);
+            console.log('response =', data);
+
+
+            // ==========================================
+            // 點歌失敗
+            // ==========================================
+            if (!res.ok) {
+                // 排隊已達上限
+                if (res.status === 429) {
+                    showOrderToast(
+                        data.message || '目前排隊歌曲過多，請稍後再點歌',
+                        true
+                    );
+
+                    return;
+                }
+                // 其他錯誤
+                throw new Error(
+                    data.message || `點歌失敗：${res.status}`
+                );
+            }
+
+            // ==========================================
+            // 點歌成功
+            // ==========================================
+            showOrderToast(
+                data.message || '已送出點歌'
+            );
+            startOrderCooldown();
+
         } catch (err) {
-                console.error(err);
-                showOrderToast('點歌失敗，請稍後再試', true);
+            console.error(err);
+            showOrderToast(
+                err.message || '點歌失敗，請稍後再試',
+                true
+            );
+
         } finally {
-                isOrdering = false;
-                updateOrderButtons();
+            isOrdering = false;
+            updateOrderButtons();
         }
 }
 
