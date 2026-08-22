@@ -1945,10 +1945,11 @@ function renderLyricsSearchResults(panel, results) {
 
 async function searchLyrics(row, panel) {
     setLyricsMessage(panel, "搜尋其他歌詞...");
-
+    
     try {
+        const qinput = document.querySelector('[data-action="lyrics-search-input"]');
         const query = new URLSearchParams({
-            q: row.dataset.artist,
+            q: qinput.value,//row.dataset.artist,
             track_name: row.dataset.songName
         });
         const response = await fetch(`${LRCLIB_SEARCH_API_URL}?${query}`, {
