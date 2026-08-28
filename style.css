@@ -1,6 +1,5 @@
 body {
     font-family: "Noto Sans TC", sans-serif;
-    background: linear-gradient(144deg, #f0bfff, #dbd9ff);
     height: 100vh;
     min-height: 95dvh;
     margin: 0;
@@ -11,6 +10,8 @@ body {
     background-image: url(./img/2000_27.webp);
     background-repeat: no-repeat;
     background-position: center;
+    background: linear-gradient(33deg, #f0bfff00, #dbd9ff00), url(./img/2000_27.webp);
+    overflow: hidden;
 }
 
 .card {
@@ -183,19 +184,23 @@ input:focus {
     border-radius: 14px;
     padding: 12px;
     margin-bottom: 10px;
-    animation: fadeIn .2s ease;
+    animation: fadeIn 0.2s ease;
     backdrop-filter: blur(3px);
     width: 85%;
     height: 4rem;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.3s ease, background 0.25s ease;
 }
 
 .item:hover {
-    background: linear-gradient(158deg, #b8abffb5, #dbd9ffb5, #fecaffb5);
-    /*width: 95%;*/
-    height: 5rem;
+    background: linear-gradient(
+        158deg,
+        #b8abffb5,
+        #dbd9ffb5,
+        #fecaffb5
+    );
     border-radius: 25px;
-    scale: 1.1;
 
+    transform: scale(1.08) translateY(-2px);
 }
 
 .img_p {
@@ -379,12 +384,4 @@ input:focus {
 .icon-link:hover {
     color: #1DA1F2;
 }
-
-
-
-
-
-
-
-
 
