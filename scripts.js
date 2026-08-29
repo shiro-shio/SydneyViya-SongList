@@ -147,13 +147,31 @@ function updateOrderButtons() {
 }
 
 function startOrderCooldown() {
-        orderCooldownUntil = Date.now() + 60000;
+    orderCooldownUntil = Date.now() + 60000;
+    localStorage.setItem('orderCooldownUntil', orderCooldownUntil);
+    updateOrderButtons();
+    if (orderCooldownTimer) clearTimeout(orderCooldownTimer);
+    orderCooldownTimer = setTimeout(() => {
+        orderCooldownUntil = 0;
+        localStorage.removeItem('orderCooldownUntil');
         updateOrderButtons();
-        if (orderCooldownTimer) clearTimeout(orderCooldownTimer);
-        orderCooldownTimer = setTimeout(() => {
-                orderCooldownUntil = 0;
-                updateOrderButtons();
-        }, 60000);
+    }, 60000);
+}
+
+function restoreOrderCooldown() {
+    const cooldownUntil = Number(localStorage.getItem('orderCooldownUntil'));
+    if (!cooldownUntil || cooldownUntil <= Date.now()) {
+        localStorage.removeItem('orderCooldownUntil');
+        orderCooldownUntil = 0;
+        return;
+    }
+    orderCooldownUntil = cooldownUntil;
+    updateOrderButtons();
+    orderCooldownTimer = setTimeout(() => {
+        orderCooldownUntil = 0;
+        localStorage.removeItem('orderCooldownUntil');
+        updateOrderButtons();
+    }, cooldownUntil - Date.now());
 }
 
 async function ordersong(button, artist, songName) {
@@ -176,35 +194,21 @@ async function ordersong(button, artist, songName) {
                     })
                 }
             );
-
             const data = await res.json();
-
-            console.log('status =', res.status);
-            console.log('response =', data);
-
-
-            // ==========================================
             // 點歌失敗
-            // ==========================================
             if (!res.ok) {
-                // 排隊已達上限
                 if (res.status === 429) {
                     showOrderToast(
                         data.message || '目前排隊歌曲過多，請稍後再點歌',
                         true
                     );
-
                     return;
                 }
-                // 其他錯誤
                 throw new Error(
                     data.message || `點歌失敗：${res.status}`
                 );
             }
-
-            // ==========================================
             // 點歌成功
-            // ==========================================
             showOrderToast(
                 data.message || '已送出點歌'
             );
@@ -216,7 +220,6 @@ async function ordersong(button, artist, songName) {
                 err.message || '點歌失敗，請稍後再試',
                 true
             );
-
         } finally {
             isOrdering = false;
             updateOrderButtons();
@@ -336,7 +339,7 @@ window.addEventListener('mousemove', (e) => {
     resultBox.scrollTop = scrollTop - walk;
 });
 
-
+restoreOrderCooldown();
 
 console.warn(
     '%c如果您看到這段訊息，請不要有任何惡意操作。\n這是方便點歌簡單設計的歌單，請尊重原作者和主播。',
