@@ -184,6 +184,39 @@
             background: #f5f2f7;
         }
 
+        .direct-lyrics-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 14px;
+            border: 1px solid #e3dfe7;
+            border-radius: 9px;
+            background: white;
+            color: #59535f;
+            cursor: pointer;
+        }
+
+        .direct-lyrics-button:hover {
+            background: #f8f7fa;
+        }
+
+        @media (max-width: 600px) {
+            .direct-lyrics-button {
+                width: 32px;
+                height: 32px;
+                padding: 0;
+                justify-content: center;
+                border-color: transparent;
+                background: transparent;
+                font-size: 0;
+            }
+
+            .direct-lyrics-button i {
+                font-size: 16px;
+            }
+
+        }
+
         /* =========================
            Table
            ========================= */
@@ -597,6 +630,11 @@
             background: rgba(255, 255, 255, 0.72);
             color: #59535f;
             font-size: 12px;
+        }
+
+        .lyrics-search-track-input {
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .lyrics-offset {
@@ -1145,6 +1183,17 @@
         <div class="filter-container">
             <button
                 type="button"
+                class="direct-lyrics-button"
+                id="directLyricsButton"
+                aria-label="直接搜尋歌詞"
+                title="直接搜尋歌詞"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                歌詞
+            </button>
+
+            <button
+                type="button"
                 class="filter-button"
                 id="filterButton"
                 aria-expanded="false"
@@ -1487,7 +1536,10 @@ function renderOrders(orders) {
                         : "沒有符合篩選的點歌"}
                 </td>
             </tr>
+                ${createEmptyLyricsRow()}
         `;
+
+            bindStatusEvents();
 
         return;
     }
@@ -1510,6 +1562,49 @@ function renderOrders(orders) {
 
     bindStatusEvents();
 
+}
+
+function createEmptyLyricsRow() {
+    return `
+        <tr class="lyrics-row" hidden>
+            <td colspan="4">
+                <div class="lyrics-panel" data-lyrics-panel>
+                    <button type="button" class="lyrics-back" data-action="lyrics-back" aria-label="返回點歌單" title="返回點歌單">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div class="lyrics-lines" data-lyrics-lines>
+                        <div class="lyrics-message">輸入歌手與歌名搜尋歌詞</div>
+                    </div>
+                    <div class="lyrics-controls">
+                        <button type="button" class="lyrics-search" data-action="lyrics-search" aria-label="搜尋其他歌詞" title="搜尋其他歌詞">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                        <input class="lyrics-search-input" data-action="lyrics-search-input" type="text" aria-label="歌詞搜尋歌手" title="輸入歌手">
+                        <input class="lyrics-search-input lyrics-search-track-input" data-action="lyrics-track-input" type="text" aria-label="歌詞搜尋歌名" title="輸入歌名">
+                        <button type="button" class="lyrics-play" data-action="lyrics-play" aria-label="播放" title="播放" disabled>
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                        <span class="lyrics-time" data-lyrics-time>0:00 / 0:00</span>
+                    </div>
+                    <div class="lyrics-offset-controls">
+                        <input class="lyrics-offset" data-action="lyrics-offset" type="range" min="-5" max="5" step="0.1" value="0" aria-label="時間軸偏移" disabled>
+                        <span class="lyrics-offset-label" data-lyrics-offset-label>偏移 0.0s</span>
+                    </div>
+                    <input class="lyrics-timeline" data-action="lyrics-timeline" type="range" min="0" max="0" step="0.1" value="0" aria-label="歌詞時間軸" disabled>
+                </div>
+            </td>
+        </tr>
+        <tr data-id="" data-song-name="" data-artist="" data-user="" hidden>
+            <td class="index"></td>
+            <td class="song">
+                <button type="button" class="lyrics-toggle" data-action="lyrics-toggle" aria-expanded="false" aria-label="展開歌詞" title="展開歌詞">
+                    <i class="fa-solid fa-music"></i>
+                </button>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    `;
 }
 
 
@@ -1571,11 +1666,21 @@ function createOrderRow(order, index) {
                         </button>
                         <input
                             class="lyrics-search-input"
+                            placeholder="輸入歌手"
                             data-action="lyrics-search-input"
                             type="text"
                             value="${escapeHtml(order.artist)}"
                             aria-label="歌詞搜尋歌手"
                             title="輸入歌手"
+                        >
+                        <input
+                            class="lyrics-search-input lyrics-search-track-input"
+                            placeholder="輸入歌名"
+                            data-action="lyrics-track-input"
+                            type="text"
+                            value="${escapeHtml(order.song_name)}"
+                            aria-label="歌詞搜尋歌名"
+                            title="輸入歌名"
                         >
                         <button
                             type="button"
@@ -1930,14 +2035,32 @@ function renderLyricsSearchResults(panel, results) {
     linesElement
         .querySelectorAll("[data-search-index]")
         .forEach(button => {
-            button.addEventListener("click", () => {
+            button.addEventListener("click", async () => {
                 const state = lyricsStates.get(panel);
                 const result = results[Number(button.dataset.searchIndex)];
+                const artistName = result.artistName || result.artist_name || "";
+                const trackName = result.trackName || result.track_name || result.name || "";
 
                 try {
-                    applyLyricsData(panel, state, result);
+                    setLyricsMessage(panel, "歌詞載入中...");
+                    const query = new URLSearchParams({
+                        artist_name: artistName,
+                        track_name: trackName
+                    });
+                    const response = await fetch(`${LRCLIB_API_URL}?${query}`, {
+                        headers: {
+                            "Accept": "application/json",
+                            "X-User-Agent": "SongList (local HTML client)"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(response.status === 404 ? "找不到歌詞" : `HTTP ${response.status}`);
+                    }
+
+                    applyLyricsData(panel, state, await response.json());
                 } catch (error) {
-                    setLyricsMessage(panel, error.message);
+                    setLyricsMessage(panel, error.message || "歌詞載入失敗");
                 }
             });
         });
@@ -1945,13 +2068,20 @@ function renderLyricsSearchResults(panel, results) {
 
 async function searchLyrics(row, panel) {
     setLyricsMessage(panel, "搜尋其他歌詞...");
-    
+
     try {
-        const qinput = document.querySelector('[data-action="lyrics-search-input"]');
-        const query = new URLSearchParams({
-            q: row.dataset.artist,
-            track_name: row.dataset.songName
-        });
+        const qinput = panel.querySelector('[data-action="lyrics-search-input"]');
+        const trackInput = panel.querySelector('[data-action="lyrics-track-input"]');
+        const artist = qinput.value.trim();
+        const trackName = trackInput.value.trim();
+        const query = new URLSearchParams();
+
+        if (artist && trackName) {
+            query.set("artist_name", artist);
+            query.set("track_name", trackName);
+        } else {
+            query.set("q", artist || trackName);
+        }
         const response = await fetch(`${LRCLIB_SEARCH_API_URL}?${query}`, {
             headers: {
                 "Accept": "application/json",
@@ -2069,7 +2199,9 @@ window.addEventListener("resize", repositionOpenLyricsOverlay);
 
 function bindStatusEvents() {
 
-    document
+    const tableWrapper = document.querySelector(".table-wrapper");
+
+    tableWrapper
         .querySelectorAll('[data-action="lyrics-toggle"]')
         .forEach(button => {
             button.addEventListener("click", async event => {
@@ -2091,13 +2223,26 @@ function bindStatusEvents() {
                 positionLyricsOverlay(row, lyricsRow);
                 row.hidden = true;
 
-                if (!lyricsStates.has(panel)) {
+                if (button.dataset.directOpen) {
+                    lyricsStates.set(panel, {
+                        lines: [],
+                        currentTime: 0,
+                        offset: 0,
+                        duration: 0,
+                        playing: false,
+                        timer: null,
+                        loaded: false
+                    });
+                    setLyricsMessage(panel, "輸入歌手與歌名搜尋歌詞");
+                    panel.querySelector('[data-action="lyrics-search-input"]').value = "";
+                    panel.querySelector('[data-action="lyrics-track-input"]').value = "";
+                } else if (!lyricsStates.has(panel)) {
                     await loadLyrics(row, panel);
                 }
             });
         });
 
-    document
+    tableWrapper
         .querySelectorAll('[data-action="lyrics-back"]')
         .forEach(button => {
             button.addEventListener("click", event => {
@@ -2108,7 +2253,7 @@ function bindStatusEvents() {
             });
         });
 
-    document
+    tableWrapper
         .querySelectorAll('[data-action="lyrics-play"]')
         .forEach(button => {
             button.addEventListener("click", event => {
@@ -2129,7 +2274,7 @@ function bindStatusEvents() {
             });
         });
 
-    document
+    tableWrapper
         .querySelectorAll('[data-action="lyrics-search"]')
         .forEach(button => {
             button.addEventListener("click", event => {
@@ -2141,7 +2286,7 @@ function bindStatusEvents() {
             });
         });
 
-    document
+    tableWrapper
         .querySelectorAll('[data-action="lyrics-offset"]')
         .forEach(input => {
             input.addEventListener("input", event => {
@@ -2157,7 +2302,7 @@ function bindStatusEvents() {
             });
         });
 
-    document
+    tableWrapper
         .querySelectorAll('[data-action="lyrics-timeline"]')
         .forEach(input => {
             input.addEventListener("input", event => {
@@ -2176,7 +2321,7 @@ function bindStatusEvents() {
             });
         });
 
-    document
+    tableWrapper
         .querySelectorAll(
             '[data-action="copy-song"]'
         )
@@ -2208,7 +2353,7 @@ function bindStatusEvents() {
      * 開關下拉選單
      */
 
-    document
+    tableWrapper
         .querySelectorAll(
             '[data-action="toggle"]'
         )
@@ -2268,7 +2413,7 @@ function bindStatusEvents() {
      * 選擇狀態
      */
 
-    document
+    tableWrapper
         .querySelectorAll(
             ".status-option"
         )
@@ -2660,6 +2805,20 @@ function escapeHtml(value) {
 /* =========================================================
    初始化
    ========================================================= */
+
+document
+    .getElementById("directLyricsButton")
+    .addEventListener("click", () => {
+        const lyricsToggle = document.querySelector(
+            '.table-wrapper [data-action="lyrics-toggle"]'
+        );
+
+        if (lyricsToggle) {
+            lyricsToggle.dataset.directOpen = "true";
+            lyricsToggle.click();
+            delete lyricsToggle.dataset.directOpen;
+        }
+    });
 
 loadOrders();
 
